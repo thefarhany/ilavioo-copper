@@ -1,0 +1,571 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, X, Upload, Sparkles, Image as ImageIcon } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import Image from "next/image";
+
+interface ProductFormProps {
+  product?: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    details: string | null;
+    notes: string | null;
+    highlights: Array<{ id: number; icon: string | null; text: string }>;
+    specifications: {
+      size: string | null;
+      finishing: string | null;
+      material: string | null;
+      price: string | null;
+    } | null;
+    images: Array<{
+      id: number;
+      imageUrl: string;
+      isFeatured: boolean;
+      isCatalog: boolean;
+    }>;
+  };
+}
+
+export default function ProductForm({ product }: ProductFormProps) {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  // Form states
+  const [name, setName] = useState(product?.name || "");
+  const [slug, setSlug] = useState(product?.slug || "");
+  const [description, setDescription] = useState(product?.description || "");
+  const [details, setDetails] = useState(product?.details || "");
+  const [notes, setNotes] = useState(product?.notes || "");
+
+  // Specifications
+  const [size, setSize] = useState(product?.specifications?.size || "");
+  const [finishing, setFinishing] = useState(
+    product?.specifications?.finishing || ""
+  );
+  const [material, setMaterial] = useState(
+    product?.specifications?.material || ""
+  );
+  const [price, setPrice] = useState(product?.specifications?.price || "");
+
+  // Highlights
+  const [highlights, setHighlights] = useState(
+    product?.highlights || [{ icon: "", text: "" }]
+  );
+
+  // Images
+  const [images, setImages] = useState<
+    Array<{ url: string; isFeatured: boolean; isCatalog: boolean }>
+  >(
+    product?.images.map((img) => ({
+      url: img.imageUrl,
+      isFeatured: img.isFeatured,
+      isCatalog: img.isCatalog,
+    })) || []
+  );
+  const [imageUrl, setImageUrl] = useState("");
+
+  // Generate slug from name
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    if (!product) {
+      setSlug(generateSlug(value));
+    }
+  };
+
+  // Highlights handlers
+  const addHighlight = () => {
+    setHighlights([...highlights, { icon: "", text: "" }]);
+  };
+
+  const removeHighlight = (index: number) => {
+    setHighlights(highlights.filter((_, i) => i !== index));
+  };
+
+  const updateHighlight = (
+    index: number,
+    field: "icon" | "text",
+    value: string
+  ) => {
+    const updated = [...highlights];
+    updated[index][field] = value;
+    setHighlights(updated);
+  };
+
+  // ✅ FIXED: Upload multiple files to Supabase Storage
+  const uploadImageFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+
+      if (!e.target.files || e.target.files.length === 0) {
+        throw new Error("You must select at least one image to upload.");
+      }
+
+      const files = Array.from(e.target.files);
+
+      // Upload files one by one
+      const uploadedImages: Array<{
+        url: string;
+        isFeatured: boolean;
+        isCatalog: boolean;
+      }> = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Math.random()
+          .toString(36)
+          .substring(2)}-${Date.now()}-${i}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+
+        console.log(`Uploading file ${i + 1}/${files.length}: ${fileName}`);
+
+        // Upload to Supabase Storage
+        const { data, error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error("Upload error:", uploadError);
+          throw new Error(
+            `Failed to upload ${file.name}: ${uploadError.message}`
+          );
+        }
+
+        console.log("Upload successful:", data);
+
+        // Get public URL
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("product-images").getPublicUrl(filePath);
+
+        console.log("Public URL:", publicUrl);
+
+        uploadedImages.push({
+          url: publicUrl,
+          isFeatured: false,
+          isCatalog: false,
+        });
+      }
+
+      // Add all uploaded images to state
+      setImages([
+        ...images,
+        ...uploadedImages.map((img, idx) => ({
+          ...img,
+          isFeatured: images.length === 0 && idx === 0,
+        })),
+      ]);
+
+      // Reset input
+      e.target.value = "";
+      alert(`Successfully uploaded ${uploadedImages.length} image(s)`);
+    } catch (error: any) {
+      console.error("Error uploading images:", error);
+      alert(`Error uploading images: ${error.message || error}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Images handlers
+  const addImage = () => {
+    if (imageUrl.trim()) {
+      setImages([
+        ...images,
+        {
+          url: imageUrl,
+          isFeatured: false,
+          isCatalog: false,
+        },
+      ]);
+      setImageUrl("");
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  const toggleFeatured = (index: number) => {
+    const updated = images.map((img, i) => ({
+      ...img,
+      isFeatured: i === index ? !img.isFeatured : false,
+    }));
+    setImages(updated);
+  };
+
+  const toggleCatalog = (index: number) => {
+    const updated = images.map((img, i) => ({
+      ...img,
+      isCatalog: i === index ? !img.isCatalog : img.isCatalog,
+    }));
+    setImages(updated);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const productData = {
+      name,
+      slug,
+      description: description || null,
+      details: details || null,
+      notes: notes || null,
+      specifications: {
+        size: size || null,
+        finishing: finishing || null,
+        material: material || null,
+        price: price || null,
+      },
+      highlights: highlights.filter((h) => h.text.trim() !== ""),
+      images: images,
+    };
+
+    try {
+      const url = product ? `/api/products/${product.id}` : "/api/products";
+      const method = product ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productData),
+      });
+
+      if (response.ok) {
+        router.push("/admin/products");
+        router.refresh();
+      } else {
+        const error = await response.json();
+        alert(error.message || "Failed to save product");
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      alert("An error occurred while saving the product");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Basic Information */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Product Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              placeholder="Product Name"
+              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Slug
+            </label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder="Slug"
+              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              placeholder="Description"
+              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Details
+            </label>
+            <textarea
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              rows={4}
+              placeholder="Details"
+              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Notes
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              placeholder="Notes"
+              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Specifications */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">Specifications</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Size
+            </label>
+            <input
+              type="text"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="w-full px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              placeholder="20 cm x 30 cm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Material
+            </label>
+            <input
+              type="text"
+              value={material}
+              onChange={(e) => setMaterial(e.target.value)}
+              className="w-full px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              placeholder="Fine Copper"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Finishing
+            </label>
+            <input
+              type="text"
+              value={finishing}
+              onChange={(e) => setFinishing(e.target.value)}
+              className="w-full px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              placeholder="Polished, Antique"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Price
+            </label>
+            <input
+              type="text"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              placeholder="Contact for Details"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Highlights */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Product Highlights</h2>
+          <button
+            type="button"
+            onClick={addHighlight}
+            className="flex items-center gap-2 px-4 py-2 bg-copper-600 text-white rounded-lg hover:bg-copper-700"
+          >
+            <Plus size={20} />
+            Add Highlight
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {highlights.map((highlight, index) => (
+            <div key={index} className="flex gap-3">
+              <input
+                type="text"
+                placeholder="Icon (emoji)"
+                value={highlight.icon}
+                onChange={(e) => updateHighlight(index, "icon", e.target.value)}
+                className="w-20 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              />
+              <input
+                type="text"
+                placeholder="Highlight text"
+                value={highlight.text}
+                onChange={(e) => updateHighlight(index, "text", e.target.value)}
+                className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={() => removeHighlight(index)}
+                className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Images */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">Product Images</h2>
+
+        {/* Upload from local file - MULTIPLE */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload from Computer (Multiple)
+          </label>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+              <Upload size={20} />
+              {uploading ? "Uploading..." : "Choose Files"}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={uploadImageFiles}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+            <span className="text-sm text-gray-500">
+              Upload multiple images from your computer
+            </span>
+          </div>
+        </div>
+
+        {/* Add from URL */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Or Add from URL
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              placeholder="https://images.unsplash.com/..."
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+            />
+            <button
+              type="button"
+              onClick={addImage}
+              className="px-6 py-2 bg-copper-600 text-white rounded-lg hover:bg-copper-700"
+            >
+              Add URL
+            </button>
+          </div>
+        </div>
+
+        {/* Image Gallery */}
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {images.map((img, index) => (
+              <div
+                key={`image-${index}`}
+                className="relative group border border-gray-200 rounded-lg overflow-hidden"
+              >
+                <div className="relative aspect-square">
+                  <Image
+                    src={img.url}
+                    alt={`Product image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="absolute top-2 right-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleFeatured(index)}
+                    className={`p-2 rounded-full ${
+                      img.isFeatured
+                        ? "bg-yellow-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                    title="Featured"
+                  >
+                    <Sparkles size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleCatalog(index)}
+                    className={`p-2 rounded-full ${
+                      img.isCatalog
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                    title="Catalog"
+                  >
+                    <ImageIcon size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          disabled={isSubmitting || uploading}
+          className="px-8 py-3 bg-copper-600 text-white rounded-lg hover:bg-copper-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+        >
+          {isSubmitting
+            ? "Saving..."
+            : product
+            ? "Update Product"
+            : "Create Product"}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="px-8 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}

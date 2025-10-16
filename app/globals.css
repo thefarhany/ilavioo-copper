@@ -8,8 +8,29 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Custom Copper Colors */
+  --color-copper-50: #fef6ee;
+  --color-copper-100: #fce8d6;
+  --color-copper-200: #f8cdac;
+  --color-copper-300: #f4ab78;
+  --color-copper-400: #ee7d42;
+  --color-copper-500: #e85d1f;
+  --color-copper-600: #d94315;
+  --color-copper-700: #b43214;
+  --color-copper-800: #902918;
+  --color-copper-900: #742416;
+
+  /* Custom Cream Colors */
+  --color-cream-50: #fdfcf7;
+  --color-cream-100: #f9f6e8;
+  --color-cream-200: #f3ecd0;
+  --color-cream-300: #e8dca8;
+  --color-cream-400: #dbc479;
+
+  /* Fonts */
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-inter);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +43,30 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+}
+
+/* Utility Classes */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .font-display {
+    font-family: var(--font-display), serif;
+  }
+
+  .font-body {
+    font-family: var(--font-body), sans-serif;
+  }
 }
