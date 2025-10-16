@@ -173,10 +173,10 @@ export default function HomePage() {
                 style.
               </p>
               <p className="text-gray-700 mb-8 leading-relaxed">
-                Whether it's a statement piece for your home, a unique gift, or
-                architectural elements for commercial spaces, we work closely
-                with you from concept to completion. Every custom piece is
-                crafted with the same attention to detail and quality that
+                Whether it&apos;s a statement piece for your home, a unique
+                gift, or architectural elements for commercial spaces, we work
+                closely with you from concept to completion. Every custom piece
+                is crafted with the same attention to detail and quality that
                 defines all our work.
               </p>
               <Link

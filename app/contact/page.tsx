@@ -32,10 +32,10 @@ export default function ContactPage() {
                 Contact Us
               </h2>
               <p className="text-gray-600 mb-8">
-                We'd love to hear from you! Whether you have a question about
-                our products, need a custom design quote, or just want to share
-                your ideas, our team is here to help. Reach out through any of
-                the channels below, and we'll get back to you as soon as
+                We&apos;d love to hear from you! Whether you have a question
+                about our products, need a custom design quote, or just want to
+                share your ideas, our team is here to help. Reach out through
+                any of the channels below, and we'll get back to you as soon as
                 possible.
               </p>
 

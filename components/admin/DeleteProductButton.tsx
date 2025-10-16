@@ -57,7 +57,7 @@ export default function DeleteProductButton({
               Delete Product
             </h3>
             <p className="text-gray-600 text-center mb-6">
-              Are you sure you want to delete{" "}
+              Are you sure you want to delete
               <span className="font-semibold text-gray-900">
                 "{productName}"
               </span>

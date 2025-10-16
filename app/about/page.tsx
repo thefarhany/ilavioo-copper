@@ -1,42 +1,6 @@
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, Music } from "lucide-react";
 
 export default function AboutPage() {
-  const teamMembers = [
-    {
-      name: "John Doe",
-      role: "Manager",
-      description:
-        "Volutpat diam tortor tristique elit quis id lorem turpis facilisi. Aliquam morbi elementum odio aliqueet et.",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-    },
-    {
-      name: "John Doe",
-      role: "Manager",
-      description:
-        "Volutpat diam tortor tristique elit quis id lorem turpis facilisi. Aliquam morbi elementum odio aliqueet et.",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
-    },
-    {
-      name: "John Doe",
-      role: "Manager",
-      description:
-        "Volutpat diam tortor tristique elit quis id lorem turpis facilisi. Aliquam morbi elementum odio aliqueet et.",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    },
-    {
-      name: "John Doe",
-      role: "Manager",
-      description:
-        "Volutpat diam tortor tristique elit quis id lorem turpis facilisi. Aliquam morbi elementum odio aliqueet et.",
-      image:
-        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400",
-    },
-  ];
-
   return (
     <div className="bg-white">
       {/* Hero Section */}
