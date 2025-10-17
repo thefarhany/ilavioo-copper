@@ -57,78 +57,70 @@ export default function GalleryPage() {
       : galleryImages.filter((img) => img.category === selectedCategory);
 
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
-      <section className="relative h-[350px] bg-gray-900">
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white">
+        <div className="absolute inset-0 bg-black/20"></div>
         <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=1600"
-            alt="Gallery"
-            fill
-            className="object-cover opacity-60"
-            priority
-          />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
         </div>
-        <div className="relative h-full flex items-center justify-center">
-          <h1 className="font-display text-5xl md:text-6xl font-bold text-white">
-            Gallery
-          </h1>
+        <div className="container relative z-10 mx-auto px-4 py-20 text-center">
+          <h1 className="mb-4 text-5xl font-bold tracking-tight">Gallery</h1>
+          <p className="mx-auto max-w-2xl text-lg text-white/90">
+            Find inspiration for your next project through our diverse
+            portfolio. This collection highlights the versatility and beauty of
+            our pieces in various interior styles and architectural spaces. Let
+            these images guide you in visualizing the potential for your own
+            space.
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* Gallery Content */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Description */}
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Our Gallery
-            </h2>
-            <p className="text-gray-600 max-w-4xl">
-              Find inspiration for your next project through our diverse
-              portfolio. This collection highlights the versatility and beauty
-              of our pieces in various interior styles and architectural spaces.
-              Let these images guide you in visualizing the potential for your
-              own space.
-            </p>
-          </div>
+      {/* Filter Buttons */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-wrap justify-center gap-4">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`rounded-full px-8 py-3 font-medium transition-all ${
+                selectedCategory === category
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 hover:bg-gray-100 shadow-md"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-3 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                  selectedCategory === category
-                    ? "bg-gray-900 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* Image Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredImages.map((image) => (
-              <div
-                key={image.id}
-                className="relative h-64 rounded-lg overflow-hidden group cursor-pointer"
-              >
-                <Image
-                  src={image.url}
-                  alt={`Gallery ${image.id}`}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300" />
+      {/* Gallery Grid */}
+      <div className="container mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredImages.map((image) => (
+            <div
+              key={image.id}
+              className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-gray-900 shadow-lg transition-all hover:shadow-2xl"
+            >
+              <Image
+                src={image.url}
+                alt={`${image.category} interior design`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <span className="inline-block rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-gray-800">
+                    {image.category}
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
     </div>
   );
 }

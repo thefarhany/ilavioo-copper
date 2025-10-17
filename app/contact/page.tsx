@@ -206,13 +206,17 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Map */}
-            <div className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=1200"
-                alt="Map"
-                fill
-                className="object-cover"
-              />
+            <div className="overflow-hidden rounded-md shadow-md">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126481.47538972477!2d110.59516987273252!3d-7.531982243967956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a6e3a7bb36dc5%3A0x3027a76e352be30!2sBoyolali%2C%20Boyolali%20Regency%2C%20Central%20Java%2C%20Indonesia!5e0!3m2!1sen!2s!4v1729155000000!5m2!1sen!2s"
+                width="100%"
+                height="400"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full"
+              ></iframe>
             </div>
 
             {/* Find Us Content */}

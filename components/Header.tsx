@@ -31,8 +31,8 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl">🏆</div>
-            <span className="text-xl font-bold text-gray-900">Ilavio</span>
+            <img src="/assets/logo.png" className="w-7" />
+            <span className="text-xl font-bold text-gray-900">Ilavioo</span>
           </Link>
 
           {/* Desktop Navigation */}

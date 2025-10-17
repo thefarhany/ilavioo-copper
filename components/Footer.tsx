@@ -9,8 +9,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="text-2xl">🏆</div>
-              <span className="text-xl font-bold text-gray-900">Ilavio</span>
+              <img src="/assets/logo.png" className="w-7" />
+              <span className="text-xl font-bold text-gray-900">Ilavioo</span>
             </div>
             <p className="text-sm text-gray-600">
               At morbi arcu quis leo scelerisque ultricies. Eget adipiscing
@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-300 mt-8 pt-8 text-center text-sm text-gray-600">
-          <p>&copy; {new Date().getFullYear()} Ilavio. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Ilavioo. All rights reserved.</p>
         </div>
       </div>
     </footer>
