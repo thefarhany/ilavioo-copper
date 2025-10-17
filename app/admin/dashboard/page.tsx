@@ -64,111 +64,95 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-          <p className="text-gray-600">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome back,{" "}
-            <span className="font-semibold">{session?.user?.name}</span>
+            <span className="text-blue-600">{session?.user?.name}</span>
+          </h1>
+          <p className="text-gray-600">
+            Here's what's happening with your copper craft store today.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <Calendar className="w-5 h-5" />
-          <span className="text-sm">
-            {new Date().toLocaleDateString("id-ID", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </span>
-        </div>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {statCards.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {stat.title}
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
+              <div
+                className={`bg-gradient-to-r ${stat.gradient} p-6 flex items-center justify-between`}
+              >
+                <div className="text-white">
+                  <p className="text-sm font-medium opacity-90">{stat.title}</p>
+                  <p className="text-4xl font-bold mt-2">{stat.value}</p>
                 </div>
-                <div
-                  className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}
-                >
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
+                <stat.icon className="w-16 h-16 text-white opacity-80" />
               </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="w-5 h-5 text-orange-600" />
-            <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
-          </div>
-          <div className="space-y-3">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <TrendingUp className="w-6 h-6 text-blue-600" />
+            Quick Actions
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               href="/admin/products/new"
-              className="flex items-center gap-4 p-4 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors group"
+              className="flex items-center gap-4 p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl hover:shadow-md transition-all duration-300 border border-blue-200"
             >
-              <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <Package className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-blue-600 rounded-lg">
+                <Package className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
-                  Add New Product
+                <h3 className="font-semibold text-gray-900">
+                  Create a new copper product
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Create a new copper product
+                  Add a new product to your catalog
                 </p>
               </div>
             </Link>
+
             <Link
               href="/admin/products"
-              className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors group"
+              className="flex items-center gap-4 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-xl hover:shadow-md transition-all duration-300 border border-green-200"
             >
-              <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                <ShoppingCart className="w-6 h-6 text-gray-600" />
+              <div className="p-3 bg-green-600 rounded-lg">
+                <ShoppingCart className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-gray-600 transition-colors">
-                  Manage Products
+                <h3 className="font-semibold text-gray-900">
+                  View and edit all products
                 </h3>
                 <p className="text-sm text-gray-600">
-                  View and edit all products
+                  Manage your product inventory
                 </p>
               </div>
             </Link>
           </div>
         </div>
 
-        {/* Recent Products - SOLUSI UNTUK EMPTY STRING */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
+        {/* Recent Products */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-purple-600" />
             Recent Products
           </h2>
-          <div className="space-y-3">
-            {stats.recentProducts.length > 0 ? (
-              stats.recentProducts.map((product) => {
-                // Cek apakah ada gambar dan URL tidak kosong
-                const hasValidImage =
+
+          {stats.recentProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {stats.recentProducts.map((product) => {
+                // ✅ FIXED: Changed url to imageUrl
+                const hasImage =
                   product.images &&
                   product.images.length > 0 &&
                   product.images[0].imageUrl &&
@@ -178,32 +162,36 @@ export default async function AdminDashboardPage() {
                   <Link
                     key={product.id}
                     href={`/admin/products/${product.id}`}
-                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="group bg-gradient-to-br from-gray-50 to-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
-                      {hasValidImage ? (
+                    {hasImage ? (
+                      <div className="relative h-48 overflow-hidden bg-gray-100">
                         <Image
                           src={product.images[0].imageUrl}
                           alt={product.name}
                           fill
-                          className="object-cover"
-                          sizes="64px"
-                          onError={(e) => {
-                            // Fallback jika gambar gagal load
-                            e.currentTarget.style.display = "none";
-                          }}
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-8 h-8 text-gray-400" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
+                      </div>
+                    ) : (
+                      <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <ImageIcon className="w-16 h-16 text-gray-400" />
+                      </div>
+                    )}
+
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
                         {product.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600 mb-2">
+                        {product.description?.slice(0, 60)}
+                        {product.description &&
+                          product.description.length > 60 &&
+                          "..."}
+                      </p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
                         {new Date(product.createdAt).toLocaleDateString(
                           "id-ID"
                         )}
@@ -211,16 +199,16 @@ export default async function AdminDashboardPage() {
                     </div>
                   </Link>
                 );
-              })
-            ) : (
-              <div className="text-center py-8">
-                <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">
-                  No products yet. Create your first product!
-                </p>
-              </div>
-            )}
-          </div>
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">
+                No products yet. Create your first product!
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
