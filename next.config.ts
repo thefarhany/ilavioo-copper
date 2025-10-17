@@ -23,9 +23,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ["@prisma/client", "@prisma/engines"],
-  },
+
+  serverExternalPackages: ["@prisma/client", "@prisma/engines"],
+
   eslint: {
     ignoreDuringBuilds: false,
   },
