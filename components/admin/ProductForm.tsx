@@ -52,9 +52,14 @@ export default function ProductForm({ product }: ProductFormProps) {
   );
   const [price, setPrice] = useState(product?.specifications?.price || "");
 
-  // Highlights
-  const [highlights, setHighlights] = useState(
-    product?.highlights || [{ icon: "", text: "" }]
+  // ✅ FIXED: Highlights - ubah tipe state jadi sederhana tanpa id
+  const [highlights, setHighlights] = useState<
+    Array<{ icon: string; text: string }>
+  >(
+    product?.highlights.map((h) => ({
+      icon: h.icon || "",
+      text: h.text,
+    })) || [{ icon: "", text: "" }]
   );
 
   // Images
@@ -103,7 +108,7 @@ export default function ProductForm({ product }: ProductFormProps) {
     setHighlights(updated);
   };
 
-  // ✅ FIXED: Upload multiple files to Supabase Storage
+  // Upload multiple files to Supabase Storage
   const uploadImageFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
