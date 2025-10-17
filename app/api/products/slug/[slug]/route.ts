@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// GET product by slug
+// ✅ FIXED: GET product by slug - params is now Promise
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params; // ✅ await params
     const product = await prisma.product.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         images: {
           orderBy: [{ isFeatured: "desc" }, { isCatalog: "desc" }],
