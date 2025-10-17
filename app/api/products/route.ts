@@ -3,6 +3,36 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
+// Define types for request body
+type HighlightInput = {
+  icon: string;
+  text: string;
+};
+
+type ImageInput = {
+  url: string;
+  isFeatured: boolean;
+  isCatalog: boolean;
+};
+
+type SpecificationInput = {
+  size?: string;
+  finishing?: string;
+  material?: string;
+  price?: string;
+};
+
+type ProductCreateBody = {
+  name: string;
+  slug: string;
+  description?: string;
+  details?: string;
+  notes?: string;
+  specifications?: SpecificationInput;
+  highlights: HighlightInput[];
+  images: ImageInput[];
+};
+
 // GET all products
 export async function GET() {
   try {
@@ -14,7 +44,6 @@ export async function GET() {
       },
       orderBy: { createdAt: "desc" },
     });
-
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -29,12 +58,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = (await request.json()) as ProductCreateBody;
     const {
       name,
       slug,
@@ -82,13 +110,13 @@ export async function POST(request: NextRequest) {
               }
             : undefined,
         highlights: {
-          create: highlights.map((h: any) => ({
+          create: highlights.map((h: HighlightInput) => ({
             icon: h.icon,
             text: h.text,
           })),
         },
         images: {
-          create: images.map((img: any) => ({
+          create: images.map((img: ImageInput) => ({
             imageUrl: img.url,
             isFeatured: img.isFeatured,
             isCatalog: img.isCatalog,

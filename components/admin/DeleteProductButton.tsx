@@ -58,9 +58,7 @@ export default function DeleteProductButton({
             </h3>
             <p className="text-gray-600 text-center mb-6">
               Are you sure you want to delete
-              <span className="font-semibold text-gray-900">
-                "{productName}"
-              </span>
+              <span className="font-semibold text-gray-900">{productName}</span>
               ? This action cannot be undone.
             </p>
             <div className="flex space-x-3">

@@ -107,7 +107,6 @@ export default function ProductForm({ product }: ProductFormProps) {
   const uploadImageFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
-
       if (!e.target.files || e.target.files.length === 0) {
         throw new Error("You must select at least one image to upload.");
       }
@@ -174,9 +173,11 @@ export default function ProductForm({ product }: ProductFormProps) {
       // Reset input
       e.target.value = "";
       alert(`Successfully uploaded ${uploadedImages.length} image(s)`);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error uploading images:", error);
-      alert(`Error uploading images: ${error.message || error}`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      alert(`Error uploading images: ${errorMessage}`);
     } finally {
       setUploading(false);
     }
@@ -263,86 +264,89 @@ export default function ProductForm({ product }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
       {/* Basic Information */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Product Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Product Name"
-              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
-              required
-            />
-          </div>
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+          <Sparkles className="w-5 h-5" />
+          Basic Information
+        </h2>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Slug
-            </label>
-            <input
-              type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="Slug"
-              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
-              required
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Product Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            placeholder="Product Name"
+            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              placeholder="Description"
-              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Slug
+          </label>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            placeholder="Slug"
+            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Details
-            </label>
-            <textarea
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              rows={4}
-              placeholder="Details"
-              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Description"
+            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Notes
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-              placeholder="Notes"
-              className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Details
+          </label>
+          <textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            rows={4}
+            placeholder="Details"
+            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Notes
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={2}
+            placeholder="Notes"
+            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded-lg"
+          />
         </div>
       </div>
 
       {/* Specifications */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Specifications</h2>
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800">Specifications</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Size
             </label>
             <input
@@ -355,7 +359,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Material
             </label>
             <input
@@ -368,7 +372,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Finishing
             </label>
             <input
@@ -381,7 +385,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Price
             </label>
             <input
@@ -396,85 +400,82 @@ export default function ProductForm({ product }: ProductFormProps) {
       </div>
 
       {/* Highlights */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Product Highlights</h2>
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Product Highlights
+          </h2>
           <button
             type="button"
             onClick={addHighlight}
-            className="flex items-center gap-2 px-4 py-2 bg-copper-600 text-white rounded-lg hover:bg-copper-700"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            <Plus size={20} />
+            <Plus className="w-4 h-4" />
             Add Highlight
           </button>
         </div>
 
-        <div className="space-y-3">
-          {highlights.map((highlight, index) => (
-            <div key={index} className="flex gap-3">
-              <input
-                type="text"
-                placeholder="Icon (emoji)"
-                value={highlight.icon}
-                onChange={(e) => updateHighlight(index, "icon", e.target.value)}
-                className="w-20 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
-              />
-              <input
-                type="text"
-                placeholder="Highlight text"
-                value={highlight.text}
-                onChange={(e) => updateHighlight(index, "text", e.target.value)}
-                className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
-              />
-              <button
-                type="button"
-                onClick={() => removeHighlight(index)}
-                className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          ))}
-        </div>
+        {highlights.map((highlight, index) => (
+          <div key={index} className="flex gap-2">
+            <input
+              type="text"
+              value={highlight.icon}
+              onChange={(e) => updateHighlight(index, "icon", e.target.value)}
+              className="w-20 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+            />
+            <input
+              type="text"
+              value={highlight.text}
+              onChange={(e) => updateHighlight(index, "text", e.target.value)}
+              className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
+            />
+            <button
+              type="button"
+              onClick={() => removeHighlight(index)}
+              className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
       </div>
 
       {/* Images */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Product Images</h2>
+      <div className="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+          <ImageIcon className="w-5 h-5" />
+          Product Images
+        </h2>
 
         {/* Upload from local file - MULTIPLE */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload from Computer (Multiple)
-          </label>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
-              <Upload size={20} />
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+          <label className="cursor-pointer">
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={uploadImageFiles}
+              className="hidden"
+              disabled={uploading}
+            />
+            <span className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block">
               {uploading ? "Uploading..." : "Choose Files"}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={uploadImageFiles}
-                disabled={uploading}
-                className="hidden"
-              />
-            </label>
-            <span className="text-sm text-gray-500">
-              Upload multiple images from your computer
             </span>
-          </div>
+          </label>
+          <p className="text-sm text-gray-500 mt-2">
+            Upload multiple images from your computer
+          </p>
         </div>
 
         {/* Add from URL */}
-        <div className="mb-6">
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Or Add from URL
           </label>
           <div className="flex gap-2">
             <input
               type="url"
-              placeholder="https://images.unsplash.com/..."
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
@@ -482,7 +483,7 @@ export default function ProductForm({ product }: ProductFormProps) {
             <button
               type="button"
               onClick={addImage}
-              className="px-6 py-2 bg-copper-600 text-white rounded-lg hover:bg-copper-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Add URL
             </button>
@@ -494,19 +495,17 @@ export default function ProductForm({ product }: ProductFormProps) {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((img, index) => (
               <div
-                key={`image-${index}`}
+                key={index}
                 className="relative group border border-gray-200 rounded-lg overflow-hidden"
               >
-                <div className="relative aspect-square">
-                  <Image
-                    src={img.url}
-                    alt={`Product image ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <div className="absolute top-2 right-2 flex gap-2">
+                <Image
+                  src={img.url}
+                  alt={`Product ${index + 1}`}
+                  width={200}
+                  height={200}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute top-2 right-2 flex gap-1">
                   <button
                     type="button"
                     onClick={() => toggleFeatured(index)}
@@ -517,7 +516,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                     }`}
                     title="Featured"
                   >
-                    <Sparkles size={16} />
+                    <Sparkles className="w-4 h-4" />
                   </button>
                   <button
                     type="button"
@@ -529,14 +528,14 @@ export default function ProductForm({ product }: ProductFormProps) {
                     }`}
                     title="Catalog"
                   >
-                    <ImageIcon size={16} />
+                    <ImageIcon className="w-4 h-4" />
                   </button>
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
                     className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700"
                   >
-                    <X size={16} />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -546,11 +545,11 @@ export default function ProductForm({ product }: ProductFormProps) {
       </div>
 
       {/* Submit Button */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-end">
         <button
           type="submit"
-          disabled={isSubmitting || uploading}
-          className="px-8 py-3 bg-copper-600 text-white rounded-lg hover:bg-copper-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+          disabled={isSubmitting}
+          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
           {isSubmitting
             ? "Saving..."
