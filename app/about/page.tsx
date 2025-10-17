@@ -56,10 +56,10 @@ export default function AboutPage() {
               domestically and abroad. From vases, bathtub, cookware,
               calligraphy, logo, chandeliers, wall reliefs to customized
               ornaments – everything can be crafted to meet international export
-              standards. We take pride in bringing Indonesia's cultural heritage
-              to the global market. By choosing our products, you are not only
-              receiving high-quality metal crafts but also supporting the
-              sustainability of local tradition and artistry.
+              standards. We take pride in bringing Indonesia&apos;s cultural
+              heritage to the global market. By choosing our products, you are
+              not only receiving high-quality metal crafts but also supporting
+              the sustainability of local tradition and artistry.
             </p>
           </div>
         </div>
@@ -120,8 +120,8 @@ export default function AboutPage() {
               <p className="text-gray-700 leading-relaxed">
                 We envision a world where every home and living space feels the
                 warm and authentic touch of handcraft. Our vision is to weave
-                Tumang's heritage into the fabric of modern life, creating a
-                future where art and tradition go hand in hand.
+                Tumang&apos;s heritage into the fabric of modern life, creating
+                a future where art and tradition go hand in hand.
               </p>
             </div>
 

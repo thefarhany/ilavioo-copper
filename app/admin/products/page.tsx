@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Edit, Trash2, Eye, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit, Eye, Image as ImageIcon } from "lucide-react";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
 async function getProducts() {

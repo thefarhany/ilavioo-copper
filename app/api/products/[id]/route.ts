@@ -3,6 +3,36 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
+// Define types for request body
+type HighlightInput = {
+  icon: string;
+  text: string;
+};
+
+type ImageInput = {
+  url: string;
+  isFeatured: boolean;
+  isCatalog: boolean;
+};
+
+type SpecificationInput = {
+  size?: string;
+  finishing?: string;
+  material?: string;
+  price?: string;
+};
+
+type ProductUpdateBody = {
+  name: string;
+  slug: string;
+  description?: string;
+  details?: string;
+  notes?: string;
+  specifications?: SpecificationInput;
+  highlights: HighlightInput[];
+  images: ImageInput[];
+};
+
 // GET single product
 export async function GET(
   request: NextRequest,
@@ -42,12 +72,11 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = (await request.json()) as ProductUpdateBody;
     const {
       name,
       slug,
@@ -58,6 +87,7 @@ export async function PUT(
       highlights,
       images,
     } = body;
+
     const productId = parseInt(params.id);
 
     // Check if product exists
@@ -77,7 +107,6 @@ export async function PUT(
       const slugTaken = await prisma.product.findUnique({
         where: { slug },
       });
-
       if (slugTaken) {
         return NextResponse.json(
           { message: "Product with this slug already exists" },
@@ -90,11 +119,9 @@ export async function PUT(
     await prisma.productHighlight.deleteMany({
       where: { productId },
     });
-
     await prisma.productImage.deleteMany({
       where: { productId },
     });
-
     await prisma.productSpecification.deleteMany({
       where: { productId },
     });
@@ -124,13 +151,13 @@ export async function PUT(
               }
             : undefined,
         highlights: {
-          create: highlights.map((h: any) => ({
+          create: highlights.map((h: HighlightInput) => ({
             icon: h.icon,
             text: h.text,
           })),
         },
         images: {
-          create: images.map((img: any) => ({
+          create: images.map((img: ImageInput) => ({
             imageUrl: img.url,
             isFeatured: img.isFeatured,
             isCatalog: img.isCatalog,
@@ -161,7 +188,6 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
