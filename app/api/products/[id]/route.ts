@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // Define types for request body
@@ -33,14 +33,15 @@ type ProductUpdateBody = {
   images: ImageInput[];
 };
 
-// GET single product
+// ✅ FIXED: GET single product - params is now Promise
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params; // ✅ await params
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         images: true,
         highlights: true,
@@ -65,10 +66,10 @@ export async function GET(
   }
 }
 
-// PUT update product
+// ✅ FIXED: PUT update product - params is now Promise
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -76,6 +77,7 @@ export async function PUT(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params; // ✅ await params
     const body = (await request.json()) as ProductUpdateBody;
     const {
       name,
@@ -88,7 +90,7 @@ export async function PUT(
       images,
     } = body;
 
-    const productId = parseInt(params.id);
+    const productId = parseInt(id);
 
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
@@ -181,10 +183,10 @@ export async function PUT(
   }
 }
 
-// DELETE product
+// ✅ FIXED: DELETE product - params is now Promise
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -192,7 +194,8 @@ export async function DELETE(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const productId = parseInt(params.id);
+    const { id } = await params; // ✅ await params
+    const productId = parseInt(id);
 
     // Check if product exists
     const product = await prisma.product.findUnique({
