@@ -73,7 +73,8 @@ export default async function AdminDashboardPage() {
             <span className="text-blue-600">{session?.user?.name}</span>
           </h1>
           <p className="text-gray-600">
-            Here's what's happening with your copper craft store today.
+            Here&apos;s what&apos;s happening with your copper craft store
+            today.
           </p>
         </div>
 
