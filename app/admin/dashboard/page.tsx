@@ -171,8 +171,8 @@ export default async function AdminDashboardPage() {
                 const hasValidImage =
                   product.images &&
                   product.images.length > 0 &&
-                  product.images[0].url &&
-                  product.images[0].url.trim() !== "";
+                  product.images[0].imageUrl &&
+                  product.images[0].imageUrl.trim() !== "";
 
                 return (
                   <Link
@@ -183,7 +183,7 @@ export default async function AdminDashboardPage() {
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
                       {hasValidImage ? (
                         <Image
-                          src={product.images[0].url}
+                          src={product.images[0].imageUrl}
                           alt={product.name}
                           fill
                           className="object-cover"
