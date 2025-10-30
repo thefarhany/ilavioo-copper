@@ -50,9 +50,7 @@ export default function AdminLoginPage() {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmYjkyM2MiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2djE2aDhWMTZoLThtLTggOGg4djhoLTh2LThtOCA4djhoOHYtOGgtOG0tOCA4aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOC04aDh2OGgtOHYtOG0wLThoOHY4aC04di04bTgtOGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtMC04aDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTgtOGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtMC04aDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40"></div>
 
       <div className="max-w-md w-full space-y-8 relative">
-        {/* Card Container */}
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-amber-100">
-          {/* Header Section */}
           <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-8 py-10 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4 shadow-lg">
               <BookOpen className="w-8 h-8 text-amber-600" />
@@ -63,22 +61,7 @@ export default function AdminLoginPage() {
             <p className="text-amber-50 text-sm">Publisher Dashboard</p>
           </div>
 
-          {/* Form Section */}
           <div className="px-8 py-10">
-            {/* Demo Credentials Alert */}
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-xs font-semibold text-blue-800 mb-2">
-                Demo Credentials:
-              </p>
-              <p className="text-xs text-blue-700">
-                <span className="font-medium">Email:</span> admin@ilavio.com
-              </p>
-              <p className="text-xs text-blue-700">
-                <span className="font-medium">Password:</span> admin123
-              </p>
-            </div>
-
-            {/* Error Alert */}
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3 animate-shake">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -86,9 +69,7 @@ export default function AdminLoginPage() {
               </div>
             )}
 
-            {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email Field */}
               <div>
                 <label
                   htmlFor="email"
@@ -114,7 +95,6 @@ export default function AdminLoginPage() {
                 </div>
               </div>
 
-              {/* Password Field */}
               <div>
                 <label
                   htmlFor="password"
@@ -151,7 +131,6 @@ export default function AdminLoginPage() {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -192,7 +171,6 @@ export default function AdminLoginPage() {
           </div>
         </div>
 
-        {/* Footer */}
         <p className="text-center text-sm text-gray-600">
           © 2025 Ilavio Copper. All rights reserved.
         </p>
