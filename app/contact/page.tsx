@@ -49,7 +49,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <p className="font-semibold text-gray-900">
-                      ilavio@mail.com
+                      admin@ilavioo.com
                     </p>
                   </div>
                 </div>
@@ -91,17 +91,6 @@ export default function ContactPage() {
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center">
                       <Twitter className="text-white" size={20} />
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <p className="font-semibold text-gray-900">@ilavio</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                      <Music className="text-white" size={20} />
                     </div>
                   </div>
                   <div className="ml-4">

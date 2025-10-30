@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
+import Image from "next/image";
 
 async function getProducts() {
   const products = await prisma.product.findMany({
@@ -10,9 +11,10 @@ async function getProducts() {
       },
       specifications: true,
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
-
   return products;
 }
 
@@ -26,27 +28,60 @@ export default async function ProductsPage() {
   const products = await getProducts();
 
   return (
-    <div className="bg-white">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-copper-600 to-copper-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-display text-5xl font-bold text-white mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+      <section className="relative h-[280px] flex items-center justify-center overflow-hidden bg-gradient-to-r from-orange-600 to-orange-500">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.2),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
+        </div>
+
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
             Where Copper Meets Artistry
           </h1>
-          <p className="text-xl text-copper-100 max-w-2xl mx-auto">
+          <p className="text-lg text-white/95 font-light">
             Exclusively Handcrafted Pieces for the Discerning Few
           </p>
         </div>
       </section>
 
-      {/* Products Grid */}
+      {products.length > 0 && (
+        <section className="py-8 bg-white border-b">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-sm font-medium text-orange-600 uppercase tracking-wider">
+              {products.length} {products.length === 1 ? "Product" : "Products"}{" "}
+              Available
+            </p>
+            <h2 className="text-3xl font-bold text-gray-900 mt-2">
+              Handcrafted Excellence
+            </h2>
+          </div>
+        </section>
+      )}
+
       <section className="py-16">
-        <div className="container mx-auto px-4">
-          {products.length === 0 ? (
+        <div className="max-w-[1600px] mx-auto px-6">
+          {products.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  slug={product.slug}
+                  description={
+                    product.description || "Handcrafted copper piece"
+                  }
+                  imageUrl={
+                    product.images[0]?.imageUrl || "/placeholder-product.jpg"
+                  }
+                />
+              ))}
+            </div>
+          ) : (
             <div className="text-center py-20">
-              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 mb-6">
                 <svg
-                  className="w-12 h-12 text-gray-400"
+                  className="w-10 h-10 text-orange-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -55,65 +90,36 @@ export default async function ProductsPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                No Products Yet
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                Our collection is coming soon
               </h3>
               <p className="text-gray-600">
-                Our collection is coming soon. Stay tuned!
+                Stay tuned for our exquisite pieces!
               </p>
             </div>
-          ) : (
-            <>
-              <div className="text-center mb-12">
-                <p className="text-copper-600 font-semibold mb-2">
-                  {products.length}{" "}
-                  {products.length === 1 ? "Product" : "Products"} Available
-                </p>
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-gray-900">
-                  Handcrafted Excellence
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    name={product.name}
-                    slug={product.slug}
-                    description={product.description || ""}
-                    imageUrl={
-                      product.images[0]?.imageUrl || "/placeholder-product.jpg"
-                    }
-                  />
-                ))}
-              </div>
-            </>
           )}
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-copper-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Custom Orders Welcome
-            </h2>
-            <p className="text-lg text-gray-700 mb-8">
-              Looking for something unique? We specialize in custom copper
-              crafts tailored to your specifications.
-            </p>
-            <a
-              href="/contact"
-              className="inline-block bg-copper-600 hover:bg-copper-700 text-white font-semibold px-8 py-4 rounded-lg transition-colors shadow-lg hover:shadow-xl"
-            >
-              Get in Touch
-            </a>
-          </div>
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Custom Orders Welcome
+          </h2>
+          <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+            Looking for something unique? We specialize in custom copper crafts
+            tailored to your specifications.
+          </p>
+          <a
+            href="/contact"
+            className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-105"
+          >
+            Get in Touch
+          </a>
         </div>
       </section>
     </div>

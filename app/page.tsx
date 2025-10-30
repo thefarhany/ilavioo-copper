@@ -57,12 +57,12 @@ const features = [
 ];
 
 const galleryImages = [
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
-  "https://images.unsplash.com/photo-1603364579808-49a50ff42ea2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169",
+  "https://images.unsplash.com/photo-1747682996740-084698474f34?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1583353863920-b23b2246b6fb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1746173098001-2ae330a6a763?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1698335444519-d7200b7d195d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1480",
+  "https://images.unsplash.com/photo-1697187137607-2ed54d5338c9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1469",
+  "https://images.unsplash.com/photo-1587151711096-23c51f92c920?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
 ];
 
 export default function HomePage() {
@@ -72,7 +72,7 @@ export default function HomePage() {
       <section className="relative h-[600px] bg-gray-900">
         <div className="absolute inset-0">
           <Image
-            src="/assets/hero.jpg"
+            src="https://images.unsplash.com/photo-1643796407897-8a31dd2a6bcd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
             alt="Copper craftsmanship"
             fill
             className="object-cover opacity-60"

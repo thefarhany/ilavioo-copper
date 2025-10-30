@@ -3,11 +3,10 @@ import Image from "next/image";
 export default function AboutPage() {
   return (
     <div className="bg-white">
-      {/* Hero Section */}
       <section className="relative h-[400px] bg-gray-900">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=1600"
+            src="https://images.unsplash.com/photo-1737433096740-dccb8dd18897?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
             alt="About Us"
             fill
             className="object-cover opacity-60"
@@ -26,7 +25,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Story */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Story</h2>
@@ -65,15 +63,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Mission */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Images */}
             <div className="grid grid-cols-2 gap-4">
               <div className="relative h-[300px] rounded-lg overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=800"
+                  src="https://images.unsplash.com/photo-1566431036832-21a1a18c8108?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
                   alt="Copper craft 1"
                   fill
                   className="object-cover"
@@ -81,7 +77,7 @@ export default function AboutPage() {
               </div>
               <div className="relative h-[300px] rounded-lg overflow-hidden mt-8">
                 <Image
-                  src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=800"
+                  src="https://images.unsplash.com/photo-1590094620544-b211f65ddc07?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1527"
                   alt="Copper craft 2"
                   fill
                   className="object-cover"
@@ -89,7 +85,6 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Content */}
             <div>
               <p className="text-copper-600 font-semibold mb-2">Our Mission</p>
               <h2 className="font-display text-4xl font-bold text-copper-600 mb-6">
@@ -107,11 +102,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Vision */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Content */}
             <div>
               <p className="text-copper-600 font-semibold mb-2">Our Vision</p>
               <h2 className="font-display text-4xl font-bold text-copper-600 mb-6">
@@ -125,10 +118,9 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Image */}
             <div className="relative h-[400px] rounded-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800"
+                src="https://images.unsplash.com/photo-1610000819616-7168539b2a3c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1465"
                 alt="Vision"
                 fill
                 className="object-cover"

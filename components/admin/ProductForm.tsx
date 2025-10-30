@@ -35,14 +35,12 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Form states
   const [name, setName] = useState(product?.name || "");
   const [slug, setSlug] = useState(product?.slug || "");
   const [description, setDescription] = useState(product?.description || "");
   const [details, setDetails] = useState(product?.details || "");
   const [notes, setNotes] = useState(product?.notes || "");
 
-  // Specifications
   const [size, setSize] = useState(product?.specifications?.size || "");
   const [finishing, setFinishing] = useState(
     product?.specifications?.finishing || ""
@@ -52,7 +50,6 @@ export default function ProductForm({ product }: ProductFormProps) {
   );
   const [price, setPrice] = useState(product?.specifications?.price || "");
 
-  // ✅ FIXED: Highlights - ubah tipe state jadi sederhana tanpa id
   const [highlights, setHighlights] = useState<
     Array<{ icon: string; text: string }>
   >(
@@ -62,7 +59,6 @@ export default function ProductForm({ product }: ProductFormProps) {
     })) || [{ icon: "", text: "" }]
   );
 
-  // Images
   const [images, setImages] = useState<
     Array<{ url: string; isFeatured: boolean; isCatalog: boolean }>
   >(
@@ -74,7 +70,6 @@ export default function ProductForm({ product }: ProductFormProps) {
   );
   const [imageUrl, setImageUrl] = useState("");
 
-  // Generate slug from name
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()
@@ -89,7 +84,6 @@ export default function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  // Highlights handlers
   const addHighlight = () => {
     setHighlights([...highlights, { icon: "", text: "" }]);
   };
@@ -108,7 +102,6 @@ export default function ProductForm({ product }: ProductFormProps) {
     setHighlights(updated);
   };
 
-  // Upload multiple files to Supabase Storage
   const uploadImageFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
@@ -118,7 +111,6 @@ export default function ProductForm({ product }: ProductFormProps) {
 
       const files = Array.from(e.target.files);
 
-      // Upload files one by one
       const uploadedImages: Array<{
         url: string;
         isFeatured: boolean;
@@ -135,7 +127,6 @@ export default function ProductForm({ product }: ProductFormProps) {
 
         console.log(`Uploading file ${i + 1}/${files.length}: ${fileName}`);
 
-        // Upload to Supabase Storage
         const { data, error: uploadError } = await supabase.storage
           .from("product-images")
           .upload(filePath, file, {
@@ -152,7 +143,6 @@ export default function ProductForm({ product }: ProductFormProps) {
 
         console.log("Upload successful:", data);
 
-        // Get public URL
         const {
           data: { publicUrl },
         } = supabase.storage.from("product-images").getPublicUrl(filePath);
@@ -166,7 +156,6 @@ export default function ProductForm({ product }: ProductFormProps) {
         });
       }
 
-      // Add all uploaded images to state
       setImages([
         ...images,
         ...uploadedImages.map((img, idx) => ({
@@ -175,7 +164,6 @@ export default function ProductForm({ product }: ProductFormProps) {
         })),
       ]);
 
-      // Reset input
       e.target.value = "";
       alert(`Successfully uploaded ${uploadedImages.length} image(s)`);
     } catch (error) {
@@ -188,7 +176,6 @@ export default function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  // Images handlers
   const addImage = () => {
     if (imageUrl.trim()) {
       setImages([
@@ -270,7 +257,6 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto p-6">
-      {/* Basic Information */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
           <Sparkles className="w-5 h-5" />
@@ -345,7 +331,6 @@ export default function ProductForm({ product }: ProductFormProps) {
         </div>
       </div>
 
-      {/* Specifications */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <h2 className="text-xl font-semibold text-gray-800">Specifications</h2>
 
@@ -404,7 +389,6 @@ export default function ProductForm({ product }: ProductFormProps) {
         </div>
       </div>
 
-      {/* Highlights */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">
@@ -413,7 +397,7 @@ export default function ProductForm({ product }: ProductFormProps) {
           <button
             type="button"
             onClick={addHighlight}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center text-sm gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             <Plus className="w-4 h-4" />
             Add Highlight
@@ -424,14 +408,9 @@ export default function ProductForm({ product }: ProductFormProps) {
           <div key={index} className="flex gap-2">
             <input
               type="text"
-              value={highlight.icon}
-              onChange={(e) => updateHighlight(index, "icon", e.target.value)}
-              className="w-20 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
-            />
-            <input
-              type="text"
               value={highlight.text}
               onChange={(e) => updateHighlight(index, "text", e.target.value)}
+              placeholder="Product Highlights"
               className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
             />
             <button
@@ -445,14 +424,12 @@ export default function ProductForm({ product }: ProductFormProps) {
         ))}
       </div>
 
-      {/* Images */}
       <div className="bg-white rounded-lg shadow p-6 space-y-4">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
           <ImageIcon className="w-5 h-5" />
           Product Images
         </h2>
 
-        {/* Upload from local file - MULTIPLE */}
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
           <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
           <label className="cursor-pointer">
@@ -473,7 +450,6 @@ export default function ProductForm({ product }: ProductFormProps) {
           </p>
         </div>
 
-        {/* Add from URL */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Or Add from URL
@@ -483,19 +459,19 @@ export default function ProductForm({ product }: ProductFormProps) {
               type="url"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://images.unsplash.com/"
               className="flex-1 px-3 py-2 text-sm text-black border border-gray-300 rounded-lg"
             />
             <button
               type="button"
               onClick={addImage}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Add URL
             </button>
           </div>
         </div>
 
-        {/* Image Gallery */}
         {images.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((img, index) => (
@@ -549,7 +525,6 @@ export default function ProductForm({ product }: ProductFormProps) {
         )}
       </div>
 
-      {/* Submit Button */}
       <div className="flex gap-4 justify-end">
         <button
           type="submit"
