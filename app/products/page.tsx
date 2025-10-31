@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
-import Image from "next/image";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getProducts() {
   const products = await prisma.product.findMany({

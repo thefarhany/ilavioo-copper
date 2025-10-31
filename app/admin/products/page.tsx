@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Edit, Eye, Image as ImageIcon } from "lucide-react";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getProducts() {
   const products = await prisma.product.findMany({
