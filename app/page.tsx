@@ -72,7 +72,7 @@ export default function HomePage() {
       <section className="relative h-[600px] bg-gray-900">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1643796407897-8a31dd2a6bcd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470"
+            src="/assets/hero.jpg"
             alt="Copper craftsmanship"
             fill
             className="object-cover opacity-60"
