@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ProductCard from "@/components/ProductCard";
 import { ArrowRight, Award, Palette, Truck, ShieldCheck } from "lucide-react";
+import FeaturedProductCard from "@/components/FeaturedProductCard";
 
 // Dummy data
 const featuredProducts = [
@@ -112,7 +113,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.slug} {...product} />
+              <FeaturedProductCard key={product.slug} {...product} />
             ))}
           </div>
         </div>
