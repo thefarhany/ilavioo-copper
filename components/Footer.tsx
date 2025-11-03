@@ -13,8 +13,8 @@ export default function Footer() {
               <span className="text-xl font-bold text-gray-900">Ilavioo</span>
             </div>
             <p className="text-sm text-gray-600">
-              At morbi arcu quis leo scelerisque ultricies. Eget adipiscing
-              ultricies nisi eros.
+              Authentic handmade copper creations. Celebrating the beauty of
+              traditional craftsmanship.
             </p>
           </div>
 
