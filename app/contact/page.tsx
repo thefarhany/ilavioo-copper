@@ -1,13 +1,83 @@
+"use client";
+
+import { useState, FormEvent } from "react";
 import Image from "next/image";
 import { Mail, Phone, Instagram, Facebook, Twitter, Music } from "lucide-react";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: "success",
+          message: "Thank you! Your message has been sent successfully.",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message:
+            result.message || "Failed to send message. Please try again.",
+        });
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: "error",
+        message: "An error occurred. Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-white">
       <section className="relative h-[350px] bg-gray-900">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=1600"
+            src="https://images.unsplash.com/photo-1610701596007e+12-11502861dcfa?w=1600"
             alt="Contact Us"
             fill
             className="object-cover opacity-60"
@@ -45,7 +115,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <p className="font-semibold text-gray-900">
-                      admin@ilavioo.com
+                      marketing@ilavioo.com
                     </p>
                   </div>
                 </div>
@@ -79,7 +149,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="name"
@@ -90,6 +160,10 @@ export default function ContactPage() {
                   <input
                     type="text"
                     id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
                     placeholder="Name"
                     className="w-full px-4 py-2 bg-gray-200 rounded-lg text-black"
                   />
@@ -105,6 +179,10 @@ export default function ContactPage() {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     placeholder="Email"
                     className="w-full px-4 py-2 bg-gray-200 rounded-lg text-black"
                   />
@@ -120,6 +198,9 @@ export default function ContactPage() {
                   <input
                     type="tel"
                     id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     placeholder="Phone Number"
                     className="w-full px-4 py-2 bg-gray-200 rounded-lg text-black"
                   />
@@ -135,6 +216,9 @@ export default function ContactPage() {
                   <input
                     type="text"
                     id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
                     placeholder="Subject"
                     className="w-full px-4 py-2 bg-gray-200 rounded-lg text-black"
                   />
@@ -149,17 +233,34 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
                     rows={5}
                     placeholder="Message"
                     className="w-full px-4 py-2 bg-gray-200 rounded-lg text-black resize-none"
                   ></textarea>
                 </div>
 
+                {submitStatus.type && (
+                  <div
+                    className={`p-3 rounded-lg text-sm ${
+                      submitStatus.type === "success"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {submitStatus.message}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full md:w-auto px-8 py-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto px-8 py-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Send
+                  {isSubmitting ? "Sending..." : "Send"}
                 </button>
               </form>
             </div>
