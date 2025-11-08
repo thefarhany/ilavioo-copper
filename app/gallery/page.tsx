@@ -9,42 +9,42 @@ const galleryImages = [
   {
     id: 1,
     category: "Hotel",
-    url: "https://images.unsplash.com/photo-1665480893972-be6ea93d8779?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1374",
+    url: "/assets/images/hotel-1.jpg",
   },
   {
     id: 2,
-    category: "Villa",
-    url: "https://images.unsplash.com/photo-1746173097246-7d17403b999c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+    category: "Hotel",
+    url: "/assets/images/hotel-2.jpg",
   },
   {
     id: 3,
     category: "Hotel",
-    url: "https://images.unsplash.com/photo-1677129666505-b5efbde405f3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+    url: "/assets/images/hotel-3.jpg",
   },
   {
     id: 4,
     category: "Private Home",
-    url: "https://images.unsplash.com/photo-1677568554453-ae5baf28da6c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+    url: "/assets/images/gallery-5.jpg",
   },
   {
     id: 5,
     category: "Hotel",
-    url: "https://images.unsplash.com/photo-1605638238372-d20fef45d1a8?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+    url: "/assets/images/hotel-4.jpg",
   },
   {
     id: 6,
     category: "Villa",
-    url: "https://images.unsplash.com/photo-1699631384923-3ee55d0d3c6c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1374",
+    url: "/assets/images/gallery-2.jpg",
   },
   {
     id: 7,
     category: "Private Home",
-    url: "https://images.unsplash.com/photo-1579333242770-0d82df0d4aa6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+    url: "/assets/images/gallery-3.jpg",
   },
   {
     id: 8,
     category: "Hotel",
-    url: "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1413",
+    url: "/assets/images/hotel-5.jpg",
   },
 ];
 

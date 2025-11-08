@@ -7,35 +7,40 @@ const processSteps = [
     subtitle: "Premium Copper Selection",
     description:
       "We source only the finest quality copper, selecting material that is perfect from. Each sheet is carefully inspected for purity and consistency, ensuring the best foundation for pieces that will last generations.",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800",
+    image:
+      "https://images.unsplash.com/photo-1613218222987-f28e8cfb378f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1498",
   },
   {
     title: "Shaping",
     subtitle: "Artisan Shaping Process",
     description:
       "Our skilled craftsmen transform raw copper sheets into elegant forms using traditional techniques. Every curve and angle is meticulously crafted through patient hand-work, creating pieces that showcase the beauty ready to reach distinctive peaks we create.",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800",
+    image:
+      "https://images.unsplash.com/photo-1659682699444-9ebad278fbd3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
   },
   {
     title: "Detail Engraving",
     subtitle: "Artisanal Engraving Details",
     description:
       "Our master artisans hand-etch intricate patterns into each piece, creating unique storytelling elements. This precise engraving technique adds depth and personal character, making every item truly one-of-a-kind reflection of dedicated craftsmanship.",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800",
+    image:
+      "https://images.unsplash.com/photo-1598724168411-9ba1e003a7fe?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1374",
   },
   {
     title: "Finishing",
     subtitle: "Perfect Final Touch",
     description:
       "Each piece receives meticulous hand-polishing to achieve its signature luminous finish. The final stage enhances the copper's natural warmth and returns lasting brilliance, ensuring a lustrous surface that will age beautifully over time.",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800",
+    image:
+      "https://images.unsplash.com/photo-1737315551644-ef48f2ea8d40?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
   },
   {
     title: "Final Quality Assurance",
     subtitle: "Excellence Guaranteed",
     description:
       "Every piece undergoes rigorous inspection to ensure flawless craftsmanship and durability. We verify structural integrity, finish quality, and overall aesthetic before approval. This meticulous quality control ensures that only our finest work reaches you.",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800",
+    image:
+      "https://images.unsplash.com/photo-1650239116041-41e6091ee7ce?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
   },
 ];
 
