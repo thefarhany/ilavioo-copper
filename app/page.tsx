@@ -17,20 +17,22 @@ import {
   Star,
 } from "lucide-react";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import { prisma } from "@/lib/prisma";
 
 async function getLatestGalleryImages() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
   try {
-    const res = await fetch(`${baseUrl}/api/gallery?type=image`, {
-      next: { revalidate: 60 },
+    const galleryImages = await prisma.galleryAsset.findMany({
+      where: { type: "image" },
+      take: 8,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        url: true,
+      },
     });
 
-    if (!res.ok) return [];
-
-    const data = await res.json();
-    // Return only the first 8 images
-    return data.slice(0, 8);
+    return galleryImages;
   } catch (error) {
     console.error("Error fetching gallery images:", error);
     return [];
@@ -42,9 +44,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Hero Section with Parallax */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-50 via-cream-50 to-copper-50">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-25">
           <div className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-repeat"></div>
         </div>
@@ -91,7 +91,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
         <FadeInView
           direction="up"
           delay={1}
@@ -105,7 +104,6 @@ export default async function Home() {
         </FadeInView>
       </section>
 
-      {/* Stats Section */}
       <section className="py-16 bg-gradient-to-r from-green-600 to-forest-600 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-8">
@@ -156,7 +154,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* About Preview Section */}
       <section className="py-20 bg-cream-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -214,7 +211,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Featured Products - Keep existing component but wrap with animation */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up" className="text-center mb-12">
@@ -230,12 +226,10 @@ export default async function Home() {
             </p>
           </FadeInView>
 
-          {/* Your existing FeaturedProducts component will go here */}
           <FeaturedProducts />
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
       <section className="py-20 bg-gradient-to-br from-cream-50 to-green-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up" className="text-center mb-16">
@@ -341,7 +335,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Gallery Preview Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up" className="text-center mb-12">
@@ -358,27 +351,21 @@ export default async function Home() {
 
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
             {galleryImages.length > 0
-              ? galleryImages.map(
-                  (
-                    item: { id: string; url: string; title: string },
-                    index: number
-                  ) => (
-                    <StaggerItem key={item.id}>
-                      <div className="group relative aspect-square overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
-                        <Image
-                          src={item.url}
-                          alt={item.title || `Gallery image ${index + 1}`}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </div>
-                    </StaggerItem>
-                  )
-                )
-              : // Fallback jika belum ada gambar di database
-                [1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+              ? galleryImages.map((item, index) => (
+                  <StaggerItem key={item.id}>
+                    <div className="group relative aspect-square overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                      <Image
+                        src={item.url}
+                        alt={item.title || `Gallery image ${index + 1}`}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                  </StaggerItem>
+                ))
+              : [1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
                   <StaggerItem key={item}>
                     <div className="group relative aspect-square overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 bg-gray-200">
                       <div className="absolute inset-0 flex items-center justify-center text-gray-400">
@@ -401,7 +388,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-br from-green-50 to-cream-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up" className="text-center mb-16">
@@ -498,7 +484,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-green-600 to-forest-700 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('/copper-texture.png')] bg-repeat"></div>
@@ -533,7 +518,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
       <section className="py-16 bg-cream-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up">

@@ -60,14 +60,14 @@ export default function Header() {
                 className="flex items-center gap-2 hover:text-green-200 transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                <span>+62 812-3456-7890</span>
+                <span>+62 8121-3696-772</span>
               </a>
               <a
-                href="mailto:info@ilavio.com"
+                href="mailto:marketing@ilavioo.com"
                 className="flex items-center gap-2 hover:text-green-200 transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                <span>info@ilavio.com</span>
+                <span>marketing@ilavioo.com</span>
               </a>
             </div>
             <div className="text-xs">
@@ -100,7 +100,7 @@ export default function Header() {
                 Ilavioo
               </span>
               <span className="text-xs text-gray-500 hidden sm:block">
-                Tumang Copper Crafts
+                PT. Ilavioo Nusantara Sejahtera
               </span>
             </div>
           </Link>
@@ -242,11 +242,11 @@ export default function Header() {
                       <span>+62 812-3456-7890</span>
                     </a>
                     <a
-                      href="mailto:info@ilavio.com"
+                      href="mailto:marketing@ilavioo.com"
                       className="flex items-center gap-2 hover:text-green-600 transition-colors"
                     >
                       <Mail className="w-4 h-4" />
-                      <span>info@ilavio.com</span>
+                      <span>marketing@ilavioo.com</span>
                     </a>
                   </div>
                 </div>

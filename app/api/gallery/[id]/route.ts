@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(
   _req: Request,
@@ -41,6 +42,52 @@ export async function DELETE(
 ) {
   const { id: idString } = await params;
   const id = Number(idString);
-  await prisma.galleryAsset.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+
+  try {
+    const asset = await prisma.galleryAsset.findUnique({
+      where: { id },
+      select: { url: true },
+    });
+
+    if (!asset) {
+      return NextResponse.json({ message: "Asset not found" }, { status: 404 });
+    }
+
+    await prisma.galleryAsset.delete({ where: { id } });
+
+    if (asset.url) {
+      try {
+        const urlParts = asset.url.split(
+          "/storage/v1/object/public/gallery-assets/"
+        );
+
+        if (urlParts.length > 1) {
+          const filename = urlParts[1];
+
+          const { error: storageError } = await supabase.storage
+            .from("gallery-assets")
+            .remove([filename]);
+
+          if (storageError) {
+            console.error("⚠️ Failed to delete from storage:", storageError);
+          } else {
+            console.log("✅ Deleted from storage:", filename);
+          }
+        }
+      } catch (storageErr) {
+        console.error("⚠️ Storage deletion error:", storageErr);
+      }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: "Asset deleted successfully",
+    });
+  } catch (error) {
+    console.error("❌ Error deleting asset:", error);
+    return NextResponse.json(
+      { message: "Failed to delete asset" },
+      { status: 500 }
+    );
+  }
 }

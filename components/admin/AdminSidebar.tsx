@@ -7,8 +7,6 @@ import {
   LayoutDashboard,
   Package,
   ImageIcon,
-  Mail,
-  Settings,
   LogOut,
   X,
   Home,

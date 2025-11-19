@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import GalleryGrid from "@/components/gallery/GalleryGrid";
 import FadeInView from "@/components/animations/FadeInView";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Gallery | Ilavio - Tumang Copper Crafts",
@@ -15,29 +17,38 @@ async function getGallery(sp?: {
   category?: string;
   featured?: string;
 }) {
-  const params = new URLSearchParams();
-  if (sp?.q) params.set("q", sp.q);
-  if (sp?.type) params.set("type", sp.type);
-  if (sp?.category) params.set("category", sp.category);
-  if (sp?.featured) params.set("featured", sp.featured);
+  try {
+    const where: Prisma.GalleryAssetWhereInput = {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const url = `${baseUrl}/api/gallery${
-    params.toString() ? `?${params.toString()}` : ""
-  }`;
+    if (sp?.q) {
+      where.OR = [
+        { title: { contains: sp.q, mode: "insensitive" } },
+        { description: { contains: sp.q, mode: "insensitive" } },
+      ];
+    }
+    if (sp?.type) {
+      where.type = sp.type;
+    }
+    if (sp?.category) {
+      where.category = sp.category;
+    }
+    if (sp?.featured === "true") {
+      where.isFeatured = true;
+    }
 
-  const res = await fetch(url, { next: { revalidate: 60 } });
-  if (!res.ok) return [];
-  return (await res.json()) as Array<{
-    id: number;
-    title: string | null;
-    description: string | null;
-    url: string;
-    type: "image" | "video";
-    category: string | null;
-    tags: string[];
-    isFeatured: boolean;
-  }>;
+    const rawItems = await prisma.galleryAsset.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
+
+    return rawItems.map((item) => ({
+      ...item,
+      type: item.type as "video" | "image",
+    }));
+  } catch (error) {
+    console.error("Error fetching gallery:", error);
+    return [];
+  }
 }
 
 export default async function GalleryPage({
@@ -55,6 +66,7 @@ export default async function GalleryPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-cream-50 via-white to-green-50">
+      {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-green-600 to-forest-600 text-white py-24 lg:py-44 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('/copper-pattern.svg')] bg-repeat"></div>
@@ -74,7 +86,7 @@ export default async function GalleryPage({
           </FadeInView>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 block leading-[0]">
+        <div className="absolute bottom-0 left-0 right-0 block leading-0">
           <svg
             viewBox="0 0 1440 110"
             className="w-full h-auto block"
@@ -85,17 +97,19 @@ export default async function GalleryPage({
               fill="#ffffff"
               fillOpacity="1"
               d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"
-            />
+            ></path>
           </svg>
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50 ">
+      {/* Gallery Grid */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
           <GalleryGrid items={items} />
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInView direction="up">
@@ -103,6 +117,7 @@ export default async function GalleryPage({
               <div className="absolute inset-0 opacity-10">
                 <div className="absolute inset-0 bg-[url('/copper-texture.png')] bg-repeat"></div>
               </div>
+
               <div className="relative z-10">
                 <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
                   Ready to Experience Tumang Craftsmanship?

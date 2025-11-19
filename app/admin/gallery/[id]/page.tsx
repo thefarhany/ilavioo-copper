@@ -1,164 +1,126 @@
-// app/admin/gallery/[id]/page.tsx
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Edit, Star } from "lucide-react";
+import Image from "next/image";
+import { Image as ImageIcon, Video, Plus, Star, Play } from "lucide-react";
 import DeleteButton from "@/components/admin/gallery/DeleteButton";
 
-async function getAsset(id: number) {
-  return prisma.galleryAsset.findUnique({ where: { id } });
+async function getAssets() {
+  return prisma.galleryAsset.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 }
 
-export default async function GalleryDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const asset = await getAsset(Number(id));
-
-  if (!asset) notFound();
+export default async function GalleryListPage() {
+  const assets = await getAssets();
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Gallery</h1>
+          <p className="text-gray-600">
+            Manage images and videos for the website gallery
+          </p>
+        </div>
         <Link
-          href="/admin/gallery"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
+          href="/admin/gallery/new"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Gallery
+          <Plus className="w-4 h-4" />
+          Add New
         </Link>
+      </div>
 
-        <div className="flex gap-3">
+      {/* Gallery Grid */}
+      {assets.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-lg border-2 border-dashed border-gray-300">
+          <ImageIcon className="mx-auto text-gray-400 mb-4" size={48} />
+          <p className="text-gray-600 text-lg mb-4">No gallery items yet</p>
           <Link
-            href={`/admin/gallery/${id}/edit`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+            href="/admin/gallery/new"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
           >
-            <Edit className="w-4 h-4" />
-            Edit
+            <Plus className="w-5 h-5" />
+            Create First Item
           </Link>
-          <DeleteButton id={Number(id)} />
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Media Preview */}
-        <div className="relative bg-gray-900">
-          {asset.type === "image" ? (
-            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-              <Image
-                src={asset.url}
-                alt={asset.title || "Gallery image"}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                priority
-              />
-            </div>
-          ) : (
-            <video
-              src={asset.url}
-              controls
-              className="w-full max-h-[70vh]"
-              preload="metadata"
-            />
-          )}
-
-          {/* Badges Overlay */}
-          <div className="absolute top-4 left-4 flex gap-2">
-            <span className="px-3 py-1 bg-gray-900/80 text-white text-sm font-medium rounded-full">
-              {asset.type === "image" ? "IMAGE" : "VIDEO"}
-            </span>
-            {asset.isFeatured && (
-              <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-full">
-                <Star className="w-4 h-4" fill="currentColor" />
-                Featured
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="p-6 space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {asset.title || "Untitled"}
-            </h1>
-            {asset.description && (
-              <p className="text-gray-600">{asset.description}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                Category
-              </h3>
-              <p className="text-gray-900">
-                {asset.category || (
-                  <span className="text-gray-400">No category</span>
-                )}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                Tags
-              </h3>
-              {asset.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {asset.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm rounded-full"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {assets.map((asset) => (
+            <div
+              key={asset.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+            >
+              {/* Image/Video Preview */}
+              <Link href={`/admin/gallery/${asset.id}`} className="block">
+                <div className="relative aspect-square bg-gray-100">
+                  {asset.type === "video" ? (
+                    <div className="relative w-full h-full">
+                      <video
+                        src={asset.url}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Play className="text-white" size={48} />
+                      </div>
+                      <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded flex items-center gap-1">
+                        <Video size={12} />
+                        VIDEO
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={asset.url}
+                        alt={asset.title || "Gallery image"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                      <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded flex items-center gap-1">
+                        <ImageIcon size={12} />
+                        IMAGE
+                      </div>
+                    </div>
+                  )}
+                  {asset.isFeatured && (
+                    <div className="absolute top-2 right-2 px-2 py-1 bg-yellow-500 text-white text-xs rounded flex items-center gap-1">
+                      <Star size={12} fill="currentColor" />
+                      Featured
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <p className="text-gray-400">No tags</p>
-              )}
-            </div>
+              </Link>
 
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                Type
-              </h3>
-              <p className="text-gray-900 uppercase">{asset.type}</p>
-            </div>
+              {/* Card Content */}
+              <div className="p-4">
+                <Link href={`/admin/gallery/${asset.id}`}>
+                  <h3 className="font-semibold mb-1 hover:text-green-600 transition-colors line-clamp-1">
+                    {asset.title || "Untitled"}
+                  </h3>
+                </Link>
+                {asset.category && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    #{asset.category}
+                  </p>
+                )}
 
-            <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                URL
-              </h3>
-              <a
-                href={asset.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-emerald-600 hover:text-emerald-700 text-sm break-all"
-              >
-                {asset.url}
-              </a>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Link
+                    href={`/admin/gallery/${asset.id}/edit`}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    Edit
+                  </Link>
+                  <DeleteButton assetId={asset.id} />
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="pt-6 border-t">
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <span>
-                Created: {new Date(asset.createdAt).toLocaleString("id-ID")}
-              </span>
-              <span>
-                Updated: {new Date(asset.updatedAt).toLocaleString("id-ID")}
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -77,7 +77,9 @@ export default function Footer() {
                   <h3 className="font-display text-2xl font-bold text-white">
                     Ilavioo
                   </h3>
-                  <p className="text-xs text-gray-400">Tumang Copper Crafts</p>
+                  <p className="text-xs text-gray-400">
+                    PT. Ilavioo Nusantara Sejahtera
+                  </p>
                 </div>
               </div>
             </Link>
@@ -168,16 +170,16 @@ export default function Footer() {
                   className="flex items-center gap-3 text-gray-400 hover:text-green-400 transition-colors duration-300"
                 >
                   <Phone className="w-5 h-5 flex-shrink-0" />
-                  <span>+62 812-3456-7890</span>
+                  <span>+62 8121-3696-772</span>
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@ilavio.com"
+                  href="mailto:marketing@ilavioo.com"
                   className="flex items-center gap-3 text-gray-400 hover:text-green-400 transition-colors duration-300"
                 >
                   <Mail className="w-5 h-5 flex-shrink-0" />
-                  <span>info@ilavio.com</span>
+                  <span>marketing@ilavioo.com</span>
                 </a>
               </li>
             </ul>
