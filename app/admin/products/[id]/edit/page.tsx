@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import ProductForm from "@/components/admin/ProductForm";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 async function getProduct(id: number) {
@@ -13,16 +13,15 @@ async function getProduct(id: number) {
       specifications: true,
     },
   });
+
   return product;
 }
 
-// ✅ FIXED: params sekarang bertipe Promise
 export default async function EditProductPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // ✅ FIXED: await params sebelum destructure
   const { id } = await params;
   const product = await getProduct(parseInt(id));
 
@@ -45,20 +44,30 @@ export default async function EditProductPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        <Link
-          href="/admin/products"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Products
-        </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumb */}
+        <div className="mb-6">
+          <Link
+            href="/admin/products"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to Products</span>
+          </Link>
+        </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Update {product.name}
-        </h1>
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
+          <p className="text-gray-600 mt-2">
+            Update product information and settings
+          </p>
+        </div>
 
-        <ProductForm product={productData} />
+        {/* Form Container - Centered and Wide */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+          <ProductForm product={productData} />
+        </div>
       </div>
     </div>
   );

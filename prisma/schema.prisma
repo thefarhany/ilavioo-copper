@@ -67,3 +67,18 @@ model ProductImage {
 
   @@map("product_images")
 }
+
+model GalleryAsset {
+  id          Int       @id @default(autoincrement())
+  title       String?
+  description String?
+  url         String
+  type        String    // "image" | "video"
+  category    String?
+  tags        String[]  @default([])
+  isFeatured  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("gallery_assets")
+}

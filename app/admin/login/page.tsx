@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   LogIn,
   AlertCircle,
@@ -9,8 +11,10 @@ import {
   Lock,
   Eye,
   EyeOff,
-  BookOpen,
+  Shield,
+  CheckCircle,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -33,146 +37,261 @@ export default function AdminLoginPage() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        setError("Invalid email or password. Please try again.");
       } else {
         router.push("/admin/dashboard");
         router.refresh();
       }
-    } catch (error) {
-      setError("An error occurred. Please try again.");
+    } catch {
+      setError("An unexpected error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 px-4 sm:px-6 lg:px-8">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmYjkyM2MiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2djE2aDhWMTZoLThtLTggOGg4djhoLTh2LThtOCA4djhoOHYtOGgtOG0tOCA4aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0tOC04aDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOC04aDh2OGgtOHYtOG0wLThoOHY4aC04di04bTgtOGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtMC04aDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTgtOGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtLTggMGg4djhoLTh2LThtMC04aDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0tOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04bTggMGg4djhoLTh2LThtOCAwaDh2OGgtOHYtOG0wLThoOHY4aC04di04Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40"></div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-cream-50 to-copper-50 flex items-center justify-center p-4">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-green-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-copper-200/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+      </div>
 
-      <div className="max-w-md w-full space-y-8 relative">
-        <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-amber-100">
-          <div className="bg-gradient-to-r from-amber-600 to-orange-600 px-8 py-10 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4 shadow-lg">
-              <BookOpen className="w-8 h-8 text-amber-600" />
+      {/* Main Container - EQUAL HEIGHT GRID */}
+      <div className="w-full max-w-6xl relative z-10">
+        <div className="grid lg:grid-cols-2 lg:min-h-[700px] bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Left Side - Branding & Info - MATCH RIGHT HEIGHT */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="hidden lg:flex flex-col justify-center p-12 bg-gradient-to-br from-green-600 to-forest-600 text-white relative overflow-hidden"
+          >
+            {/* Decorative Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 bg-[url('/copper-pattern.svg')] bg-repeat"></div>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Ilavio Copper
-            </h1>
-            <p className="text-amber-50 text-sm">Publisher Dashboard</p>
-          </div>
 
-          <div className="px-8 py-10">
-            {error && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3 animate-shake">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                    placeholder="admin@ilavio.com"
+            <div className="relative z-10">
+              {/* Logo - Using Ilavio Logo */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <Image
+                    src="/favicon.ico"
+                    alt="Ilavio Logo"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12"
                   />
+                  <div>
+                    <h1 className="font-display text-3xl font-bold">Ilavio</h1>
+                    <p className="text-green-100 text-sm">
+                      Copper Crafts Admin
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+              {/* Welcome Message */}
+              <h2 className="font-display text-4xl font-bold mb-4">
+                Welcome Back!
+              </h2>
+              <p className="text-green-50 text-lg mb-8 leading-relaxed">
+                Manage your copper crafts business with our powerful admin
+                dashboard. Control products, gallery, messages, and more.
+              </p>
+
+              {/* Features List */}
+              <div className="space-y-4">
+                {[
+                  "Manage products & inventory",
+                  "Upload to gallery",
+                  "View customer messages",
+                  "Analytics & insights",
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-green-50">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Decorative Elements */}
+              <div className="absolute -bottom-8 -right-8 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            </div>
+          </motion.div>
+
+          {/* Right Side - Login Form - FULL HEIGHT */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center p-6 sm:p-12"
+          >
+            <div className="w-full max-w-md">
+              {/* Mobile Logo - Using Ilavio Logo */}
+              <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
+                <Image
+                  src="/logo.png" // Replace with your colored logo path
+                  alt="Ilavio Logo"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
+                <div>
+                  <h1 className="font-display text-2xl font-bold text-gray-900">
+                    Ilavio
+                  </h1>
+                  <p className="text-gray-500 text-sm">Admin Panel</p>
+                </div>
+              </div>
+
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                  <Shield className="w-8 h-8 text-green-600" />
+                </div>
+                <h2 className="font-display text-3xl font-bold text-gray-900 mb-2">
+                  Sign In
+                </h2>
+                <p className="text-gray-600">
+                  Enter your credentials to access the dashboard
+                </p>
+              </div>
+
+              {/* Error Message */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex items-start gap-3 p-4 mb-6 bg-red-50 border-2 border-red-200 rounded-xl"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-red-800 text-sm font-medium">{error}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Login Form */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email Field */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-semibold text-gray-900 mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                      placeholder="admin@ilavio.com"
+                      className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-black focus:border-green-500 focus:outline-none focus:bg-white transition-all placeholder:text-gray-400"
+                    />
                   </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                    placeholder="Enter your password"
-                  />
+                </div>
+
+                {/* Password Field */}
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-gray-900 mb-2"
+                  >
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      autoComplete="current-password"
+                      placeholder="Enter your password"
+                      className="w-full pl-12 pr-12 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl text-black focus:border-green-500 focus:outline-none focus:bg-white transition-all placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Remember Me & Forgot Password */}
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    />
+                    <span className="text-sm text-gray-600">Remember me</span>
+                  </label>
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="text-sm text-green-600 hover:text-green-700 font-semibold"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 transition" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600 transition" />
-                    )}
+                    Forgot password?
                   </button>
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="h-5 w-5" />
-                    Sign In to Dashboard
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Signing In...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-5 h-5" />
+                      <span>Sign In</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Footer */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <p className="text-center text-sm text-gray-500">
+                  Protected by Ilavio Security System
+                </p>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        <p className="text-center text-sm text-gray-600">
-          © 2025 Ilavio Copper. All rights reserved.
+        {/* Copyright - Outside Card */}
+        <p className="text-center text-sm text-gray-500 mt-6">
+          © {new Date().getFullYear()} Ilavio Copper Crafts. All rights
+          reserved.
         </p>
       </div>
     </div>

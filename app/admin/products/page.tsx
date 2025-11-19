@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { Plus, Edit, Eye, Image as ImageIcon } from "lucide-react";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 export const dynamic = "force-dynamic";
@@ -102,10 +103,12 @@ export default async function ProductsPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
                           {product.images[0] ? (
-                            <img
+                            <Image
                               src={product.images[0].imageUrl}
                               alt={product.name}
-                              className="w-16 h-16 object-cover rounded-lg"
+                              width={48}
+                              height={48}
+                              className="object-cover rounded"
                             />
                           ) : (
                             <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">

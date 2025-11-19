@@ -1,335 +1,318 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MessageCircle, Mail, ArrowRight } from "lucide-react";
-import { useParams } from "next/navigation";
+import FadeInView from "@/components/animations/FadeInView";
+import ProductImageGallery from "@/components/products/ProductImageGallery";
+import ProductTabs from "@/components/products/ProductTabs";
+import RelatedProducts from "@/components/products/RelatedProducts";
+import {
+  ArrowLeft,
+  Package,
+  Ruler,
+  Sparkles,
+  Tag,
+  Shield,
+  Mail,
+  Phone,
+  CheckCircle,
+} from "lucide-react";
 
-interface ProductImage {
-  id: string;
-  imageUrl: string;
-  isFeatured: boolean;
-  isCatalog: boolean;
-}
-
-interface ProductHighlight {
-  id: string;
-  icon?: string;
-  text: string;
-}
-
-interface ProductSpecifications {
-  size?: string;
-  finishing?: string;
-  material?: string;
-  price?: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  details?: string;
-  notes?: string;
-  images: ProductImage[];
-  highlights?: ProductHighlight[];
-  specifications?: ProductSpecifications;
-}
-
-export default function ProductDetailPage() {
-  const params = useParams();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const response = await fetch(`/api/products/slug/${params.slug}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProduct(data);
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProduct();
-  }, [params.slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-copper-600"></div>
-      </div>
-    );
-  }
+async function getProduct(slug: string) {
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: {
+      images: {
+        orderBy: { id: "asc" },
+      },
+      specifications: true,
+      highlights: true,
+    },
+  });
 
   if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Product Not Found
-          </h1>
-          <Link
-            href="/products"
-            className="text-copper-600 hover:text-copper-700"
-          >
-            Back to Products
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
-  // Get all images (featured first, then catalog, then others)
-  const featuredImage = product.images.find((img) => img.isFeatured);
-  const catalogImages = product.images.filter((img) => img.isCatalog);
-  const otherImages = product.images.filter(
-    (img) => !img.isFeatured && !img.isCatalog
-  );
+  return product;
+}
 
-  // Use Set to ensure unique images by id
-  const uniqueImages = Array.from(
-    new Map(
-      [
-        ...(featuredImage ? [featuredImage] : []),
-        ...catalogImages,
-        ...otherImages,
-      ].map((img) => [img.id, img])
-    ).values()
-  );
+async function getRelatedProducts(currentProductId: number) {
+  const products = await prisma.product.findMany({
+    where: {
+      NOT: { id: currentProductId },
+    },
+    take: 4,
+    include: {
+      images: {
+        where: { isCatalog: true },
+        take: 1,
+      },
+      specifications: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return products;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+  return {
+    title: `${product.name} - Ilavio Copper Crafts`,
+    description:
+      product.description ||
+      `Handcrafted ${product.name} from Tumang, Indonesia`,
+  };
+}
+
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+  const relatedProducts = await getRelatedProducts(product.id);
 
   return (
-    <div className="bg-white">
-      {/* Hero Image */}
-      <section className="bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="relative h-[500px] rounded-lg overflow-hidden">
-            {uniqueImages.length > 0 &&
-            uniqueImages[selectedImage]?.imageUrl ? (
-              <Image
-                src={uniqueImages[selectedImage].imageUrl}
-                alt={product.name}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-400">No Image</span>
-              </div>
-            )}
-          </div>
-
-          {/* Thumbnail Gallery */}
-          {uniqueImages.length > 1 && (
-            <div className="grid grid-cols-6 gap-4 mt-4">
-              {uniqueImages.slice(0, 6).map((img, idx) => (
-                <button
-                  key={`thumbnail-${img.id}`}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`relative h-24 rounded-lg overflow-hidden ${
-                    selectedImage === idx
-                      ? "ring-4 ring-copper-600"
-                      : "opacity-60 hover:opacity-100"
-                  } transition-all`}
+    <main className="min-h-screen bg-gradient-to-br from-cream-50 via-white to-green-50">
+      {/* Breadcrumb Section */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <FadeInView direction="down">
+            <div className="flex items-center justify-between">
+              <nav className="flex items-center gap-2 text-sm text-gray-600">
+                <Link
+                  href="/"
+                  className="hover:text-green-600 transition-colors"
                 >
-                  {img.imageUrl ? (
-                    <Image
-                      src={img.imageUrl}
-                      alt={`Thumbnail ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-xs text-gray-500">No Image</span>
-                    </div>
-                  )}
-                </button>
-              ))}
+                  Home
+                </Link>
+                <span>/</span>
+                <Link
+                  href="/products"
+                  className="hover:text-green-600 transition-colors"
+                >
+                  Products
+                </Link>
+                <span>/</span>
+                <span className="text-gray-900 font-semibold line-clamp-1">
+                  {product.name}
+                </span>
+              </nav>
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-green-600 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back to Products</span>
+              </Link>
             </div>
-          )}
+          </FadeInView>
         </div>
       </section>
 
-      {/* Product Details */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            {product.name}
-          </h1>
+      {/* Product Details Section */}
+      <section className="py-12 sm:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 mb-16">
+            {/* Left Column - Image Gallery */}
+            <FadeInView direction="left">
+              <ProductImageGallery
+                images={product.images}
+                productName={product.name}
+              />
+            </FadeInView>
 
-          <div className="prose max-w-none mb-8">
-            {product.description && (
-              <p className="text-gray-700 leading-relaxed mb-4">
-                {product.description}
-              </p>
-            )}
-            {product.details && (
-              <p className="text-gray-700 leading-relaxed">{product.details}</p>
-            )}
-          </div>
+            {/* Right Column - Product Info */}
+            <FadeInView direction="right">
+              <div className="lg:sticky lg:top-24">
+                {/* Product Title */}
+                <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                  {product.name}
+                </h1>
 
-          {/* Highlights */}
-          {product.highlights && product.highlights.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Product Highlights :
-              </h2>
-              <ul className="space-y-3">
-                {product.highlights.map((highlight) => (
-                  <li
-                    key={`highlight-${highlight.id}`}
-                    className="flex items-start"
-                  >
-                    {highlight.icon && (
-                      <span className="text-2xl mr-3">{highlight.icon}</span>
-                    )}
-                    <span className="text-gray-700">{highlight.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                {/* Product Description */}
+                {product.description && (
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                    {product.description}
+                  </p>
+                )}
 
-          {/* View Process Button */}
-          <div className="mb-12">
-            <Link
-              href="/process"
-              className="inline-flex items-center text-sm bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-            >
-              View Our Process &nbsp; <ArrowRight size={20} />
-            </Link>
-          </div>
+                {/* Price Badge */}
+                {product.specifications?.price && (
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl shadow-lg">
+                      <Tag className="w-5 h-5" />
+                      <span className="text-2xl font-bold">
+                        {product.specifications.price}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      Starting price
+                    </span>
+                  </div>
+                )}
 
-          {/* Specifications Table */}
-          {product.specifications && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Product Specifications
-              </h2>
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <tbody className="divide-y divide-gray-300">
+                {/* Specifications Grid */}
+                {/* Specifications dengan Flexbox - Tetap Cards Besar */}
+                {product.specifications && (
+                  <div className="flex flex-wrap gap-4 mb-8">
                     {product.specifications.size && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-semibold text-gray-900 w-1/4">
-                          Size
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {product.specifications.size}
-                        </td>
-                      </tr>
+                      <div className="flex-1 min-w-[calc(50%-8px)] flex items-start gap-3 p-4 bg-white rounded-xl border-2 border-gray-100 hover:border-green-200 transition-colors">
+                        <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Ruler className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-500 mb-1">Size</p>
+                          <p className="font-semibold text-gray-900 break-words">
+                            {product.specifications.size}
+                          </p>
+                        </div>
+                      </div>
                     )}
+
                     {product.specifications.finishing && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-semibold text-gray-900">
-                          Finishing
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {product.specifications.finishing}
-                        </td>
-                      </tr>
+                      <div className="flex-1 min-w-[calc(50%-8px)] flex items-start gap-3 p-4 bg-white rounded-xl border-2 border-gray-100 hover:border-copper-200 transition-colors">
+                        <div className="w-10 h-10 bg-copper-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-5 h-5 text-copper-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-500 mb-1">
+                            Finishing
+                          </p>
+                          <p className="font-semibold text-gray-900 break-words">
+                            {product.specifications.finishing}
+                          </p>
+                        </div>
+                      </div>
                     )}
+
                     {product.specifications.material && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-semibold text-gray-900">
-                          Material
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {product.specifications.material}
-                        </td>
-                      </tr>
-                    )}
-                    {product.specifications.price && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-semibold text-gray-900">
-                          Price
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {product.specifications.price}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Product Notes */}
-          {product.notes && (
-            <div className="bg-gray-50 rounded-lg p-8 mb-12">
-              <p className="text-gray-700 leading-relaxed italic">
-                {product.notes}
-              </p>
-            </div>
-          )}
-
-          {/* Contact Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <a
-              href="https://wa.me/628123456789"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-sm rounded-lg font-semibold transition-colors"
-            >
-              <MessageCircle className="mr-2" size={20} />
-              Contact Us via Whatsapp
-            </a>
-            <a
-              href="mailto:info@ilavio.com"
-              className="flex items-center justify-center bg-copper-600 hover:bg-copper-700 text-white px-8 py-3 text-sm rounded-lg font-semibold transition-colors"
-            >
-              <Mail className="mr-2" size={20} />
-              Contact Us via Email
-            </a>
-          </div>
-
-          {/* Product Catalog */}
-          {catalogImages.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Product Catalog
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {catalogImages.map((img, idx) => (
-                  <div
-                    key={`catalog-${img.id}`}
-                    className="relative h-64 rounded-lg overflow-hidden cursor-pointer group"
-                    onClick={() =>
-                      setSelectedImage(
-                        uniqueImages.findIndex((uImg) => uImg.id === img.id)
-                      )
-                    }
-                  >
-                    {img.imageUrl ? (
-                      <Image
-                        src={img.imageUrl}
-                        alt={`Catalog ${idx + 1}`}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                        <span className="text-gray-500">No Image</span>
+                      <div className="flex-1 min-w-[calc(50%-8px)] flex items-start gap-3 p-4 bg-white rounded-xl border-2 border-gray-100 hover:border-green-200 transition-colors">
+                        <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Package className="w-5 h-5 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-500 mb-1">Material</p>
+                          <p className="font-semibold text-gray-900 break-words">
+                            {product.specifications.material}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
-                ))}
+                )}
+
+                {/* Highlights */}
+                {product.highlights && product.highlights.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-green-600" />
+                      Key Features
+                    </h3>
+                    <ul className="space-y-3">
+                      {product.highlights.map((highlight) => (
+                        <li
+                          key={highlight.id}
+                          className="flex items-start gap-3"
+                        >
+                          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-700">
+                            {highlight.text}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link
+                    href="/contact"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                  >
+                    <Mail className="w-5 h-5" />
+                    Request Quote
+                  </Link>
+                  <a
+                    href="tel:+6281234567890"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Call Us
+                  </a>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <div className="grid grid-cols-3 gap-4 text-center text-sm">
+                    <div>
+                      <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Shield className="w-6 h-6 text-green-600" />
+                      </div>
+                      <p className="font-semibold text-gray-900">Authentic</p>
+                      <p className="text-xs text-gray-500">100% Genuine</p>
+                    </div>
+                    <div>
+                      <div className="w-12 h-12 bg-copper-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Sparkles className="w-6 h-6 text-copper-600" />
+                      </div>
+                      <p className="font-semibold text-gray-900">Handmade</p>
+                      <p className="text-xs text-gray-500">By Artisans</p>
+                    </div>
+                    <div>
+                      <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Package className="w-6 h-6 text-green-600" />
+                      </div>
+                      <p className="font-semibold text-gray-900">Quality</p>
+                      <p className="text-xs text-gray-500">Premium</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            </FadeInView>
+          </div>
+
+          {/* Product Tabs - Details, Notes, etc */}
+          <FadeInView direction="up">
+            <ProductTabs
+              details={product.details}
+              notes={product.notes}
+              specifications={product.specifications}
+            />
+          </FadeInView>
         </div>
       </section>
-    </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <FadeInView direction="up">
+              <div className="text-center mb-12">
+                <span className="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+                  You May Also Like
+                </span>
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                  Related Products
+                </h2>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                  Explore more exquisite copper pieces from our collection
+                </p>
+              </div>
+            </FadeInView>
+
+            <RelatedProducts products={relatedProducts} />
+          </div>
+        </section>
+      )}
+    </main>
   );
 }

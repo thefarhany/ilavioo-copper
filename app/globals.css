@@ -3,34 +3,58 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
 
-  /* Custom Copper Colors */
-  --color-copper-50: #fef6ee;
-  --color-copper-100: #fce8d6;
-  --color-copper-200: #f8cdac;
-  --color-copper-300: #f4ab78;
-  --color-copper-400: #ee7d42;
-  --color-copper-500: #e85d1f;
-  --color-copper-600: #d94315;
-  --color-copper-700: #b43214;
-  --color-copper-800: #902918;
-  --color-copper-900: #742416;
+    /* Custom Copper Colors */
+    --color-copper-50: #fef6ee;
+    --color-copper-100: #fce8d6;
+    --color-copper-200: #f8cdac;
+    --color-copper-300: #f4ab78;
+    --color-copper-400: #ee7d42;
+    --color-copper-500: #e85d1f;
+    --color-copper-600: #d94315;
+    --color-copper-700: #b43214;
+    --color-copper-800: #902918;
+    --color-copper-900: #742416;
 
-  /* Custom Cream Colors */
-  --color-cream-50: #fdfcf7;
-  --color-cream-100: #f9f6e8;
-  --color-cream-200: #f3ecd0;
-  --color-cream-300: #e8dca8;
-  --color-cream-400: #dbc479;
+    /* Custom Cream Colors */
+    --color-cream-50: #fdfcf7;
+    --color-cream-100: #f9f6e8;
+    --color-cream-200: #f3ecd0;
+    --color-cream-300: #e8dca8;
+    --color-cream-400: #dbc479;
 
-  /* Fonts */
-  --font-display: var(--font-playfair);
-  --font-body: var(--font-inter);
+    /* Green Colors - matching logo */
+    --color-green-50: #f0fdf4;
+    --color-green-100: #dcfce7;
+    --color-green-200: #bbf7d0;
+    --color-green-300: #86efac;
+    --color-green-400: #4ade80;
+    --color-green-500: #22c55e;
+    --color-green-600: #16a34a;
+    --color-green-700: #15803d;
+    --color-green-800: #166534;
+    --color-green-900: #14532d;
+
+    /* Forest Green for depth */
+    --color-forest-50: #f0f9f4;
+    --color-forest-100: #daf2e4;
+    --color-forest-200: #a8d8b9;
+    --color-forest-300: #6db98d;
+    --color-forest-400: #3b7a57;
+    --color-forest-500: #2e5b3a;
+    --color-forest-600: #234829;
+    --color-forest-700: #1a3620;
+    --color-forest-800: #142818;
+    --color-forest-900: #0f1e12;
+
+    /* Fonts */
+    --font-display: var(--font-playfair);
+    --font-body: var(--font-inter);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -68,5 +92,44 @@ body {
 
   .font-body {
     font-family: var(--font-body), sans-serif;
+  }
+
+  /* Gradient text utility */
+  .gradient-text {
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #b87333 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Copper shimmer effect */
+  .copper-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .copper-shimmer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(184, 115, 51, 0.3),
+      transparent
+    );
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
 }

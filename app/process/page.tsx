@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Hammer, Palette, Sparkles, ShieldCheck, Globe } from "lucide-react";
+import { Hammer, Palette, Sparkles, Globe } from "lucide-react";
 
 const processSteps = [
   {

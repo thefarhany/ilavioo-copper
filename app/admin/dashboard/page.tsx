@@ -1,27 +1,30 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import Image from "next/image";
 import {
   Package,
   Image as ImageIcon,
-  User,
   TrendingUp,
-  ShoppingCart,
-  Calendar,
+  Eye,
+  Plus,
+  ArrowRight,
 } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getDashboardStats() {
-  const totalProducts = await prisma.product.count();
-  const totalImages = await prisma.productImage.count();
-  const totalUsers = await prisma.user.count();
+  const [totalProducts, totalImages] = await Promise.all([
+    prisma.product.count(),
+    prisma.productImage.count(),
+  ]);
 
   const recentProducts = await prisma.product.findMany({
     take: 5,
     orderBy: { createdAt: "desc" },
     include: {
       images: {
+        where: { isFeatured: true },
         take: 1,
       },
     },
@@ -30,187 +33,280 @@ async function getDashboardStats() {
   return {
     totalProducts,
     totalImages,
-    totalUsers,
     recentProducts,
   };
 }
 
 export default async function AdminDashboardPage() {
-  const session = await getServerSession(authOptions);
   const stats = await getDashboardStats();
 
-  const statCards = [
-    {
-      title: "Total Products",
-      value: stats.totalProducts,
-      icon: Package,
-      color: "bg-blue-500",
-      gradient: "from-blue-500 to-blue-600",
-    },
-    {
-      title: "Total Images",
-      value: stats.totalImages,
-      icon: ImageIcon,
-      color: "bg-green-500",
-      gradient: "from-green-500 to-green-600",
-    },
-    {
-      title: "Admin Users",
-      value: stats.totalUsers,
-      icon: User,
-      color: "bg-purple-500",
-      gradient: "from-purple-500 to-purple-600",
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome back,{" "}
-            <span className="text-blue-600">{session?.user?.name}</span>
-          </h1>
-          <p className="text-gray-600">
-            Here&apos;s what&apos;s happening with your copper craft store
-            today.
-          </p>
-        </div>
+    <div className="space-y-8 max-w-7xl">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Dashboard Overview
+        </h1>
+        <p className="text-gray-600">
+          Welcome back! Here&apos;s what&apos;s happening with your store.
+        </p>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {statCards.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
-              <div
-                className={`bg-gradient-to-r ${stat.gradient} p-6 flex items-center justify-between`}
-              >
-                <div className="text-white">
-                  <p className="text-sm font-medium opacity-90">{stat.title}</p>
-                  <p className="text-4xl font-bold mt-2">{stat.value}</p>
-                </div>
-                <stat.icon className="w-16 h-16 text-white opacity-80" />
-              </div>
+      {/* Quick Actions */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Link
+          href="/admin/products/new"
+          className="group bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 hover:shadow-xl transition-all hover:scale-105 relative overflow-hidden"
+        >
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+          <div className="relative z-10">
+            <Plus className="w-8 h-8 mb-3" />
+            <h3 className="font-semibold text-lg mb-1">Add Product</h3>
+            <p className="text-white/80 text-sm">Create new product</p>
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/products"
+          className="group bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 hover:shadow-xl transition-all hover:scale-105 relative overflow-hidden"
+        >
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+          <div className="relative z-10">
+            <Package className="w-8 h-8 mb-3" />
+            <h3 className="font-semibold text-lg mb-1">Manage Products</h3>
+            <p className="text-white/80 text-sm">View all products</p>
+          </div>
+        </Link>
+
+        <Link
+          href="/"
+          target="_blank"
+          className="group bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 hover:shadow-xl transition-all hover:scale-105 relative overflow-hidden"
+        >
+          <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+          <div className="relative z-10">
+            <Eye className="w-8 h-8 mb-3" />
+            <h3 className="font-semibold text-lg mb-1">View Website</h3>
+            <p className="text-white/80 text-sm">Check live site</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Total Products */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Package className="w-6 h-6 text-white" />
             </div>
-          ))}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-blue-600" />
-            Quick Actions
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link
-              href="/admin/products/new"
-              className="flex items-center gap-4 p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl hover:shadow-md transition-all duration-300 border border-blue-200"
-            >
-              <div className="p-3 bg-blue-600 rounded-lg">
-                <Package className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">
-                  Create a new copper product
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Add a new product to your catalog
-                </p>
-              </div>
-            </Link>
-
-            <Link
-              href="/admin/products"
-              className="flex items-center gap-4 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-xl hover:shadow-md transition-all duration-300 border border-green-200"
-            >
-              <div className="p-3 bg-green-600 rounded-lg">
-                <ShoppingCart className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">
-                  View and edit all products
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Manage your product inventory
-                </p>
-              </div>
-            </Link>
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
+              <TrendingUp className="w-3 h-3" />
+              Active
+            </div>
+          </div>
+          <div>
+            <p className="text-gray-600 text-sm mb-1 font-medium">
+              Total Products
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {stats.totalProducts}
+            </p>
           </div>
         </div>
 
-        {/* Recent Products */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-purple-600" />
-            Recent Products
-          </h2>
-
-          {stats.recentProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {stats.recentProducts.map((product) => {
-                // ✅ FIXED: Changed url to imageUrl
-                const hasImage =
-                  product.images &&
-                  product.images.length > 0 &&
-                  product.images[0].imageUrl &&
-                  product.images[0].imageUrl.trim() !== "";
-
-                return (
-                  <Link
-                    key={product.id}
-                    href={`/admin/products/${product.id}`}
-                    className="group bg-gradient-to-br from-gray-50 to-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    {hasImage ? (
-                      <div className="relative h-48 overflow-hidden bg-gray-100">
-                        <Image
-                          src={product.images[0].imageUrl}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <ImageIcon className="w-16 h-16 text-gray-400" />
-                      </div>
-                    )}
-
-                    <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2">
-                        {product.description?.slice(0, 60)}
-                        {product.description &&
-                          product.description.length > 60 &&
-                          "..."}
-                      </p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(product.createdAt).toLocaleDateString(
-                          "id-ID"
-                        )}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
+        {/* Total Images */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <ImageIcon className="w-6 h-6 text-white" />
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">
-                No products yet. Create your first product!
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+              <TrendingUp className="w-3 h-3" />
+              Growing
+            </div>
+          </div>
+          <div>
+            <p className="text-gray-600 text-sm mb-1 font-medium">
+              Total Images
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {stats.totalImages}
+            </p>
+          </div>
+        </div>
+
+        {/* Average Images per Product */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <ImageIcon className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700">
+              Avg
+            </div>
+          </div>
+          <div>
+            <p className="text-gray-600 text-sm mb-1 font-medium">
+              Images per Product
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {stats.totalProducts > 0
+                ? Math.round((stats.totalImages / stats.totalProducts) * 10) /
+                  10
+                : 0}
+            </p>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 group">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-700">
+              Recent
+            </div>
+          </div>
+          <div>
+            <p className="text-gray-600 text-sm mb-1 font-medium">
+              Latest Products
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {stats.recentProducts.length}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Products Table */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Package className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 text-lg">
+                Recent Products
+              </h3>
+              <p className="text-sm text-gray-500">
+                Latest additions to catalog
               </p>
             </div>
-          )}
+          </div>
+          <Link
+            href="/admin/products"
+            className="text-sm text-green-600 hover:text-green-700 font-semibold flex items-center gap-1 group"
+          >
+            View All
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
+
+        {stats.recentProducts.length === 0 ? (
+          <div className="p-12 text-center">
+            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 mb-1">No products yet</p>
+            <p className="text-sm text-gray-400 mb-4">
+              Get started by creating your first product
+            </p>
+            <Link
+              href="/admin/products/new"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
+            >
+              <Plus className="w-4 h-4" />
+              Add First Product
+            </Link>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {stats.recentProducts.map((product) => (
+              <div
+                key={product.id}
+                className="p-4 hover:bg-gray-50 transition-colors group"
+              >
+                <div className="flex items-center gap-4">
+                  {/* Product Image */}
+                  <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    {product.images[0]?.imageUrl ? (
+                      <Image
+                        src={product.images[0].imageUrl}
+                        alt={product.name}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="w-6 h-6 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-gray-900 truncate group-hover:text-green-600 transition-colors">
+                      {product.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 truncate">
+                      {product.description || "No description"}
+                    </p>
+                  </div>
+
+                  {/* Date */}
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm text-gray-600 font-medium">
+                      {new Date(product.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(product.createdAt).toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/admin/products/${product.id}/edit`}
+                      className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </Link>
+                    <Link
+                      href={`/products/${product.slug}`}
+                      target="_blank"
+                      className="p-2 hover:bg-green-50 text-green-600 rounded-lg transition-colors"
+                      title="View"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

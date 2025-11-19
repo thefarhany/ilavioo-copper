@@ -1,286 +1,567 @@
 import Link from "next/link";
 import Image from "next/image";
-import ProductCard from "@/components/ProductCard";
-import { ArrowRight, Award, Palette, Truck, ShieldCheck } from "lucide-react";
-import FeaturedProductCard from "@/components/FeaturedProductCard";
+import FadeInView from "@/components/animations/FadeInView";
+import StaggerContainer, {
+  StaggerItem,
+} from "@/components/animations/StaggerContainer";
+import CountUpNumber from "@/components/animations/CountUpNumber";
+import ParallaxSection from "@/components/animations/ParallaxSection";
+import {
+  Award,
+  Users,
+  Sparkles,
+  Shield,
+  Leaf,
+  Hammer,
+  ChevronRight,
+  Star,
+} from "lucide-react";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
-// Dummy data
-const featuredProducts = [
-  {
-    name: "Elegant Vases",
-    slug: "elegant-vases",
-    description: "Elegant vases to beautify any space in your home.",
-    imageUrl: "/assets/elegant-vases.jpg",
-  },
-  {
-    name: "Hanging Lamp",
-    slug: "hanging-lamp",
-    description: "Stylish pendant lamps to illuminate and define your room.",
-    imageUrl: "/assets/hanging-lamp.jpg",
-  },
-  {
-    name: "Wall Decor",
-    slug: "wall-decor",
-    description: "Curated wall art to express your unique personality.",
-    imageUrl: "/assets/wall-decor.jpg",
-  },
-  {
-    name: "Custom Design",
-    slug: "custom-design",
-    description: "Bespoke furniture and decor tailored to your vision.",
-    imageUrl: "/assets/custom-design.jpg",
-  },
-];
+async function getLatestGalleryImages() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-const features = [
-  {
-    icon: Award,
-    title: "Expert Craftsmanship",
-    description:
-      "Each piece is handcrafted by skilled artisans with decades of experience.",
-  },
-  {
-    icon: Palette,
-    title: "Custom Design",
-    description:
-      "Create bespoke pieces tailored to your unique vision and space.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Quality Materials",
-    description: "We use only premium copper and sustainable materials.",
-  },
-  {
-    icon: Truck,
-    title: "Global Shipping",
-    description: "Safe and reliable delivery to destinations worldwide.",
-  },
-];
+  try {
+    const res = await fetch(`${baseUrl}/api/gallery?type=image`, {
+      next: { revalidate: 60 },
+    });
 
-const galleryImages = [
-  "https://images.unsplash.com/photo-1747682996740-084698474f34?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-  "https://images.unsplash.com/photo-1583353863920-b23b2246b6fb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-  "https://images.unsplash.com/photo-1746173098001-2ae330a6a763?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-  "https://images.unsplash.com/photo-1698335444519-d7200b7d195d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1480",
-  "https://images.unsplash.com/photo-1697187137607-2ed54d5338c9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1469",
-  "https://images.unsplash.com/photo-1587151711096-23c51f92c920?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
-];
+    if (!res.ok) return [];
 
-export default function HomePage() {
+    const data = await res.json();
+    // Return only the first 8 images
+    return data.slice(0, 8);
+  } catch (error) {
+    console.error("Error fetching gallery images:", error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const galleryImages = await getLatestGalleryImages();
+
   return (
-    <>
-      {/* Hero Section */}
-      <section className="relative h-[600px] bg-gray-900">
-        <div className="absolute inset-0">
-          <Image
-            src="/assets/hero.jpg"
-            alt="Copper craftsmanship"
-            fill
-            className="object-cover opacity-60"
-            priority
-          />
+    <main className="min-h-screen">
+      {/* Hero Section with Parallax */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-50 via-cream-50 to-copper-50">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-25">
+          <div className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-repeat"></div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
-          <div className="max-w-2xl text-white">
-            <h1 className="font-display text-5xl md:text-6xl font-bold mb-6">
-              Where Heritage is Hand-Forged
-            </h1>
-            <p className="text-xl mb-8 text-gray-200">
-              Timeless Copper Crafts from the Heart of Tumang, Indonesia
-            </p>
-            <Link
-              href="/products"
-              className="inline-flex items-center text-sm bg-copper-600 hover:bg-copper-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Explore Products
-              <ArrowRight className="ml-2" size={20} />
-            </Link>
+
+        <ParallaxSection offset={80} className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-copper-500/10"></div>
+        </ParallaxSection>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <FadeInView direction="up" delay={0.2}>
+              <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                Timeless <span className="gradient-text">Copper Crafts</span>
+                <br />
+                from Tumang, Indonesia
+              </h1>
+            </FadeInView>
+
+            <FadeInView direction="up" delay={0.4}>
+              <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Discover our collection of handcrafted copper pieces, each
+                telling a story of tradition and artistry passed down through
+                generations
+              </p>
+            </FadeInView>
+
+            <FadeInView direction="up" delay={0.6}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  Explore Products
+                  <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/about"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl border-2 border-gray-200"
+                >
+                  Our Story
+                </Link>
+              </div>
+            </FadeInView>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <FadeInView
+          direction="up"
+          delay={1}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <div className="animate-bounce">
+            <div className="w-6 h-10 border-2 border-green-600 rounded-full flex items-start justify-center p-2">
+              <div className="w-1.5 h-3 bg-green-600 rounded-full"></div>
+            </div>
+          </div>
+        </FadeInView>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gradient-to-r from-green-600 to-forest-600 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <StaggerItem>
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold font-display mb-2">
+                  <CountUpNumber value={30} suffix="+" />
+                </div>
+                <p className="text-green-100 text-sm sm:text-base">
+                  Years of Excellence
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold font-display mb-2">
+                  <CountUpNumber value={5000} suffix="+" />
+                </div>
+                <p className="text-green-100 text-sm sm:text-base">
+                  Happy Customers
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold font-display mb-2">
+                  <CountUpNumber value={150} suffix="+" />
+                </div>
+                <p className="text-green-100 text-sm sm:text-base">
+                  Unique Designs
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl font-bold font-display mb-2">
+                  <CountUpNumber value={100} suffix="%" />
+                </div>
+                <p className="text-green-100 text-sm sm:text-base">
+                  Handcrafted
+                </p>
+              </div>
+            </StaggerItem>
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* About Preview Section */}
+      <section className="py-20 bg-cream-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <FadeInView direction="left">
+              <div className="relative h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/assets/wall-decor.jpg"
+                  alt="Tumang Copper Artisan at Work"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute bottom-6 left-6 text-white">
+                  <p className="text-sm font-semibold mb-1">Tumang, Boyolali</p>
+                  <p className="text-xs opacity-90">
+                    Where Tradition Meets Craftsmanship
+                  </p>
+                </div>
+              </div>
+            </FadeInView>
+
+            <FadeInView direction="right">
+              <div>
+                <span className="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+                  Our Heritage
+                </span>
+                <h2 className="font-display text-4xl sm:text-5xl font-bold mb-6 text-gray-900">
+                  Every piece begins its journey in{" "}
+                  <span className="text-green-600">skilled hands</span>
+                </h2>
+                <p className="text-gray-600 mb-6 leading-relaxed text-lg">
+                  In the heart of Tumang, Boyolali, our artisans use techniques
+                  passed down through generations to transform raw copper into
+                  works of art that blend traditional craftsmanship with
+                  contemporary design.
+                </p>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  From the first hammer strike to the final polish, each
+                  creation is a testament to patience, precision, and passion.
+                  We source only the finest materials and employ sustainable
+                  practices to ensure our craft honors both heritage and
+                  environment.
+                </p>
+                <Link
+                  href="/about"
+                  className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold group"
+                >
+                  Learn More About Our Process
+                  <ChevronRight className="ml-1 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </FadeInView>
           </div>
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products - Keep existing component but wrap with animation */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-4xl font-bold text-gray-900 mb-4">
-              Our Products
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeInView direction="up" className="text-center mb-12">
+            <span className="inline-block px-4 py-1 bg-copper-100 text-copper-700 rounded-full text-sm font-semibold mb-4">
+              Our Collection
+            </span>
+            <h2 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+              Featured Products
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Discover our collection of handcrafted copper pieces, each telling
-              a story of tradition and artistry
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Discover our finest handcrafted copper pieces, each one a
+              testament to the rich tradition of Tumang craftsmanship
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <FeaturedProductCard key={product.slug} {...product} />
-            ))}
-          </div>
+          </FadeInView>
+
+          {/* Your existing FeaturedProducts component will go here */}
+          <FeaturedProducts />
         </div>
       </section>
 
-      {/* Handcrafting Copper Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image
-                src="/assets/hand-crafting.jpg"
-                alt="Handcrafting copper"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="font-display text-4xl font-bold text-copper-600 mb-6">
-                Handcrafting Copper
-              </h2>
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                Every piece begins its journey in the skilled hands of our
-                artisans in Tumang, Boyolali. Using techniques passed down
-                through generations, we transform raw copper into works of art
-                that blend traditional craftsmanship with contemporary design.
-              </p>
-              <p className="text-gray-700 mb-8 leading-relaxed">
-                From the first hammer strike to the final polish, each creation
-                is a testament to patience, precision, and passion. We source
-                only the finest materials and employ sustainable practices to
-                ensure our craft honors both heritage and environment.
-              </p>
-              <Link
-                href="/about"
-                className="inline-flex items-center text-copper-600 hover:text-copper-700 font-semibold"
-              >
-                Learn More About Our Process
-                <ArrowRight className="ml-2" size={20} />
-              </Link>
-            </div>
-          </div>
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-gradient-to-br from-cream-50 to-green-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeInView direction="up" className="text-center mb-16">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+              Why Choose <span className="text-green-600">Ilavio</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              We combine traditional craftsmanship with modern excellence
+            </p>
+          </FadeInView>
+
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                  <Hammer className="w-7 h-7 text-green-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Master Craftsmanship
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Every piece is handcrafted by skilled artisans with decades of
+                  experience in traditional copper working techniques.
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-copper-100 rounded-xl flex items-center justify-center mb-6">
+                  <Shield className="w-7 h-7 text-copper-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Premium Quality
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  We use only the finest copper materials, ensuring durability
+                  and timeless beauty in every creation.
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                  <Leaf className="w-7 h-7 text-green-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Sustainable Practice
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Our eco-friendly processes honor both tradition and the
+                  environment for a sustainable future.
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-copper-100 rounded-xl flex items-center justify-center mb-6">
+                  <Sparkles className="w-7 h-7 text-copper-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Custom Design
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Collaborate with our master craftsmen to create unique,
+                  personalized pieces that match your vision.
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                  <Award className="w-7 h-7 text-green-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Award Winning
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Recognized nationally for excellence in preserving and
+                  innovating traditional copper craftsmanship.
+                </p>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+                <div className="w-14 h-14 bg-copper-100 rounded-xl flex items-center justify-center mb-6">
+                  <Users className="w-7 h-7 text-copper-600" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-3 text-gray-900">
+                  Trusted by Thousands
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Join over 5,000 satisfied customers who trust us for authentic
+                  Tumang copper crafts.
+                </p>
+              </div>
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </section>
 
-      {/* Custom Model Section */}
+      {/* Gallery Preview Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1">
-              <h2 className="font-display text-4xl font-bold text-copper-600 mb-6">
-                Custom Model
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeInView direction="up" className="text-center mb-12">
+            <span className="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+              Inspiration Gallery
+            </span>
+            <h2 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+              Our <span className="text-copper-600">Masterpieces</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Explore our stunning collection of handcrafted copper artworks
+            </p>
+          </FadeInView>
+
+          <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+            {galleryImages.length > 0
+              ? galleryImages.map(
+                  (
+                    item: { id: string; url: string; title: string },
+                    index: number
+                  ) => (
+                    <StaggerItem key={item.id}>
+                      <div className="group relative aspect-square overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                        <Image
+                          src={item.url}
+                          alt={item.title || `Gallery image ${index + 1}`}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      </div>
+                    </StaggerItem>
+                  )
+                )
+              : // Fallback jika belum ada gambar di database
+                [1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+                  <StaggerItem key={item}>
+                    <div className="group relative aspect-square overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 bg-gray-200">
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+                        No image
+                      </div>
+                    </div>
+                  </StaggerItem>
+                ))}
+          </StaggerContainer>
+
+          <FadeInView direction="up" className="text-center">
+            <Link
+              href="/gallery"
+              className="inline-flex items-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            >
+              View Full Gallery
+              <ChevronRight className="ml-2 w-5 h-5" />
+            </Link>
+          </FadeInView>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-br from-green-50 to-cream-100">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeInView direction="up" className="text-center mb-16">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+              What Our <span className="text-green-600">Customers Say</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Trusted by thousands of satisfied customers worldwide
+            </p>
+          </FadeInView>
+
+          <StaggerContainer className="grid md:grid-cols-3 gap-8">
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div className="flex mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">
+                  &quot;The craftsmanship is absolutely stunning! Each piece
+                  tells a story and the attention to detail is remarkable.
+                  Highly recommended!&quot;
+                </p>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-green-600 font-bold">SH</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Sarah Hartono</p>
+                    <p className="text-sm text-gray-500">Jakarta</p>
+                  </div>
+                </div>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div className="flex mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">
+                  &quot;Authentic Tumang quality! I&apos;ve bought several
+                  pieces for my restaurant and customers always ask about them.
+                  True works of art.&quot;
+                </p>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-copper-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-copper-600 font-bold">BW</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Budi Wijaya</p>
+                    <p className="text-sm text-gray-500">Surabaya</p>
+                  </div>
+                </div>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div className="flex mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">
+                  &quot;Custom design service exceeded my expectations. The
+                  artisans really understood my vision and delivered a
+                  masterpiece!&quot;
+                </p>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-green-600 font-bold">AP</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Anita Putri</p>
+                    <p className="text-sm text-gray-500">Bandung</p>
+                  </div>
+                </div>
+              </div>
+            </StaggerItem>
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-green-600 to-forest-700 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[url('/copper-texture.png')] bg-repeat"></div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <FadeInView direction="up">
+              <h2 className="font-display text-4xl sm:text-5xl font-bold mb-6">
+                Have a Vision? We Bring It to Life
               </h2>
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                Have a vision? We bring it to life. Our custom design service
-                allows you to collaborate directly with our master craftsmen to
-                create one-of-a-kind pieces that perfectly match your space and
-                style.
+            </FadeInView>
+
+            <FadeInView direction="up" delay={0.2}>
+              <p className="text-xl text-green-50 mb-8 leading-relaxed">
+                Our custom design service allows you to collaborate directly
+                with our master craftsmen to create one-of-a-kind pieces that
+                perfectly match your space and style.
               </p>
-              <p className="text-gray-700 mb-8 leading-relaxed">
-                Whether it&apos;s a statement piece for your home, a unique
-                gift, or architectural elements for commercial spaces, we work
-                closely with you from concept to completion. Every custom piece
-                is crafted with the same attention to detail and quality that
-                defines all our work.
-              </p>
+            </FadeInView>
+
+            <FadeInView direction="up" delay={0.4}>
               <Link
                 href="/contact"
-                className="inline-flex items-center text-sm bg-copper-600 hover:bg-copper-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="inline-flex items-center px-8 py-4 bg-white text-green-600 hover:bg-cream-50 rounded-full font-semibold transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
               >
                 Start Your Custom Project
+                <ChevronRight className="ml-2 w-5 h-5" />
               </Link>
-            </div>
-            <div className="order-1 lg:order-2 relative h-[400px] rounded-lg overflow-hidden">
-              <Image
-                src="/assets/custom-model.jpg"
-                alt="Custom copper work"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature) => (
-              <div key={feature.title} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-copper-100 rounded-full mb-4">
-                  <feature.icon className="text-copper-600" size={32} />
-                </div>
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
-              </div>
-            ))}
+            </FadeInView>
           </div>
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 bg-gradient-to-r from-copper-600 to-copper-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-display text-4xl font-bold text-white mb-4">
-            Get Exclusive Updates
-          </h2>
-          <p className="text-copper-100 mb-8">
-            Subscribe to our newsletter for new collections, special offers, and
-            artisan stories
-          </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-copper-200 text-sm text-copper-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
-            />
-            <button
-              type="submit"
-              className="bg-white text-copper-600 px-8 py-3 text-sm rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </section>
-
-      {/* Gallery Preview */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-4xl font-bold text-gray-900 mb-4">
-              Our Gallery
-            </h2>
-            <p className="text-gray-600">
-              A glimpse into our world of copper craftsmanship
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {galleryImages.map((img, idx) => (
-              <div
-                key={idx}
-                className="relative h-64 rounded-lg overflow-hidden group cursor-pointer"
-              >
-                <Image
-                  src={img}
-                  alt={`Gallery ${idx + 1}`}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+      <section className="py-16 bg-cream-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeInView direction="up">
+            <div className="max-w-2xl mx-auto text-center">
+              <h3 className="font-display text-3xl font-bold mb-4 text-gray-900">
+                Stay Connected
+              </h3>
+              <p className="text-gray-600 mb-8">
+                Subscribe to receive updates on new collections, exclusive
+                offers, and behind-the-scenes stories from our workshop
+              </p>
+              <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 px-6 py-4 rounded-full border-2 border-gray-200 text-black focus:border-green-500 focus:outline-none transition-colors"
                 />
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link
-              href="/gallery"
-              className="inline-flex items-center text-copper-600 hover:text-copper-700 font-semibold"
-            >
-              View Full Gallery
-              <ArrowRight className="ml-2" size={20} />
-            </Link>
-          </div>
+                <button
+                  type="submit"
+                  className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl whitespace-nowrap"
+                >
+                  Subscribe
+                </button>
+              </form>
+            </div>
+          </FadeInView>
         </div>
       </section>
-    </>
+    </main>
   );
 }
