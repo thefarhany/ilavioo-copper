@@ -20,8 +20,6 @@ const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
-  { name: "Messages", href: "/admin/messages", icon: Mail },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 interface AdminSidebarProps {
