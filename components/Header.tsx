@@ -56,7 +56,7 @@ export default function Header() {
           <div className="flex items-center justify-between py-2 text-sm">
             <div className="flex items-center gap-6">
               <a
-                href="tel:+6281234567890"
+                href="tel:+6281213696772"
                 className="flex items-center gap-2 hover:text-green-200 transition-colors"
               >
                 <Phone className="w-4 h-4" />
