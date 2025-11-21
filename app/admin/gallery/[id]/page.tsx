@@ -18,7 +18,7 @@ export default async function GalleryListPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Gallery</h1>
+          <h1 className="text-3xl font-bold text-black mb-2">Gallery</h1>
           <p className="text-gray-600">
             Manage images and videos for the website gallery
           </p>
@@ -96,7 +96,7 @@ export default async function GalleryListPage() {
               {/* Card Content */}
               <div className="p-4">
                 <Link href={`/admin/gallery/${asset.id}`}>
-                  <h3 className="font-semibold mb-1 hover:text-green-600 transition-colors line-clamp-1">
+                  <h3 className="font-semibold mb-1 text-black line-clamp-1">
                     {asset.title || "Untitled"}
                   </h3>
                 </Link>

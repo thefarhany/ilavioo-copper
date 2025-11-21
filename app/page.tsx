@@ -45,8 +45,8 @@ export default async function Home() {
   return (
     <main className="min-h-screen">
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-50 via-cream-50 to-copper-50">
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-repeat"></div>
+        <div className="absolute inset-0 opacity-50">
+          <div className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-cover"></div>
         </div>
 
         <ParallaxSection offset={80} className="absolute inset-0 z-0">

@@ -52,7 +52,7 @@ export default function AdminTopbar({
               <input
                 type="search"
                 placeholder="Search products, gallery..."
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border text-black border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm"
               />
             </div>
           </div>
@@ -60,74 +60,6 @@ export default function AdminTopbar({
 
         {/* Right: Notifications + User Menu */}
         <div className="flex items-center gap-3">
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setShowNotifications(!showNotifications);
-                setShowUserMenu(false);
-              }}
-              className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Bell className="w-6 h-6 text-gray-700" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            {/* Notifications Dropdown */}
-            <AnimatePresence>
-              {showNotifications && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 overflow-hidden"
-                >
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900">
-                        Notifications
-                      </h3>
-                      {unreadCount > 0 && (
-                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                          {unreadCount} new
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((notif) => (
-                      <button
-                        key={notif.id}
-                        className={`w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left border-l-2 ${
-                          notif.unread
-                            ? "border-green-500 bg-green-50/50"
-                            : "border-transparent"
-                        }`}
-                      >
-                        <p className="text-sm font-medium text-gray-900">
-                          {notif.title}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {notif.time}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="px-4 py-3 border-t border-gray-200">
-                    <button className="text-sm text-green-600 hover:text-green-700 font-semibold">
-                      View all notifications
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           {/* User Menu */}
           <div className="relative">
             <button
@@ -146,44 +78,7 @@ export default function AdminTopbar({
               <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
                 {session?.user?.name?.charAt(0) || "A"}
               </div>
-              <ChevronDown className="w-4 h-4 text-gray-500" />
             </button>
-
-            {/* User Dropdown */}
-            <AnimatePresence>
-              {showUserMenu && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 overflow-hidden"
-                >
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {session?.user?.name || "Admin User"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {session?.user?.email}
-                    </p>
-                  </div>
-                  <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    Profile Settings
-                  </button>
-                  <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    Account Settings
-                  </button>
-                  <div className="border-t border-gray-200 mt-2 pt-2">
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/admin/login" })}
-                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors font-semibold"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
       </div>
