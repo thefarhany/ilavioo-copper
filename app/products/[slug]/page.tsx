@@ -242,7 +242,7 @@ export default async function ProductDetailPage({
                     Request Quote
                   </Link>
                   <a
-                    href="tel:+6281234567890"
+                    href="tel:+6281213696772"
                     className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     <Phone className="w-5 h-5" />

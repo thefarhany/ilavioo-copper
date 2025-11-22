@@ -126,7 +126,7 @@ export default function AboutPage() {
             <FadeInView direction="left">
               <div className="relative h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/assets/images/gallery-4.jpg"
+                  src="/assets/about.jpg"
                   alt="Tumang Copper Artisan"
                   fill
                   className="object-cover"

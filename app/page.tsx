@@ -160,7 +160,7 @@ export default async function Home() {
             <FadeInView direction="left">
               <div className="relative h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/assets/wall-decor.jpg"
+                  src="/assets/hero-2.jpg"
                   alt="Tumang Copper Artisan at Work"
                   fill
                   className="object-cover"
